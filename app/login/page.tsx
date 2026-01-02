@@ -1,14 +1,18 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { loginUser } from "../redux/auth/auth-slice";
+import { useAppDispatch } from "../redux/hooks";
 
 export default function LoginPage() {
+  const dispatch = useAppDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Login attempt:", { username, password });
+    dispatch(loginUser({ username, password }));
   };
 
   return (
