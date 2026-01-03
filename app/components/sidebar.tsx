@@ -34,7 +34,7 @@ const navLinks = [
   },
   {
     name: "Learning Material",
-    href: "/dashboard/admin/upload",
+    href: "/dashboard/learning",
     icon: <LearningMaterialIcon />,
   },
   {
