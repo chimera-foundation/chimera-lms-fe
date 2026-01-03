@@ -1,22 +1,45 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loginUser } from "../redux/auth/auth-slice";
-import { useAppDispatch } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useRouter } from "next/navigation";
+import { API_URL } from "../settings";
 
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { error, loading, accessToken, isAuthenticated } = useAppSelector(
+    (x) => x.user
+  );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // console.log("Login attempt:", { username, password });
-    // dispatch(loginUser({ username, password }));
-    router.push("/dashboard");
+
+    try {
+      const result = await dispatch(
+        loginUser({ email: username, password })
+      ).unwrap();
+
+      if (result.access_token) {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
   };
+
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black text-white">
@@ -38,18 +61,23 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          {error && (
+            <div className="rounded-md bg-red-900/20 border border-red-900 p-3">
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
+          )}
           <div className="space-y-4">
             <div>
               <label
                 htmlFor="username"
                 className="block text-sm font-medium text-zinc-50"
               >
-                Username
+                Email
               </label>
               <input
                 id="username"
                 name="username"
-                type="text"
+                type="email"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -80,9 +108,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full rounded-md px-4 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 bg-zinc-50 text-zinc-900 hover:bg-zinc-200 focus:ring-zinc-50"
           >
-            Sign in
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
       </div>

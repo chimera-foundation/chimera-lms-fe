@@ -1,8 +1,34 @@
-export const loginUserService = async (props: {
+interface LoginResponse {
   username: string;
-  password: string;
-}): Promise<any> => {
-  const { username, password } = props;
+  access_token: string;
+  token_type: string;
+}
 
-  return `this is from service ${username} ${password}`;
+export const loginUserService = async (props: {
+  email: string;
+  password: string;
+}): Promise<LoginResponse> => {
+  const { email, password } = props;
+
+  const response = await fetch(`/api/auth/login`, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Login failed" }));
+    throw new Error(error.detail || `HTTP error! status: ${response.status}`);
+  }
+
+  const data: LoginResponse = await response.json();
+  return data;
 };

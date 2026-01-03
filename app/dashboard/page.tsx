@@ -1,8 +1,14 @@
+"use client";
+import { useRouter } from "next/navigation";
+import { logout } from "../redux/auth/auth-slice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import Announcements from "./components/announcements";
 import { Calendar } from "./components/calendar";
 import EventsSection from "./components/events";
 
 export default function DashboardPage() {
+  const { username } = useAppSelector((x) => x.user);
+
   return (
     <div className="p-4 h-screen overflow-scroll bg-slate-50">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -11,7 +17,7 @@ export default function DashboardPage() {
           <p className="text-gray-600">Hello Student, welcome back!</p>
         </div>
         <div>
-          <p className="font-semibold text-gray-800">Student</p>
+          <p className="font-semibold text-gray-800">{username}</p>
           <p className="text-sm text-gray-500">Student</p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import DashboardIcon from "./icons/dashboard-icon";
 import CalendarIcon from "./icons/calendar-icon";
 import ExamIcon from "./icons/exam-icon";
@@ -14,6 +14,8 @@ import FinanceIcon from "./icons/finance-icon";
 import StoreIcon from "./icons/store-icon";
 import AccountIcon from "./icons/account-icon";
 import Image from "next/image";
+import { useAppDispatch } from "../redux/hooks";
+import { logout } from "../redux/auth/auth-slice";
 
 const navLinks = [
   { name: "Dashboard", href: "/dashboard", icon: <DashboardIcon /> },
@@ -76,6 +78,13 @@ const navLinks = [
 
 export default function Sidebar() {
   const pathname = usePathname() || "/";
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/login");
+  };
 
   return (
     <aside
@@ -131,24 +140,26 @@ export default function Sidebar() {
         </ul>
       </nav>
 
-      {/* <div className="px-3 py-4 border-t border-slate-100">
+      <div className="px-3 py-4 border-t border-slate-100">
         <div className="flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6 text-black"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"
-            />
-          </svg>
+          <button onClick={handleLogout}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6 text-black"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"
+              />
+            </svg>
+          </button>
         </div>
-      </div> */}
+      </div>
     </aside>
   );
 }
