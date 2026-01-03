@@ -3,20 +3,23 @@ import Image from "next/image";
 import { useState } from "react";
 import { loginUser } from "../redux/auth/auth-slice";
 import { useAppDispatch } from "../redux/hooks";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt:", { username, password });
-    dispatch(loginUser({ username, password }));
+    // console.log("Login attempt:", { username, password });
+    // dispatch(loginUser({ username, password }));
+    router.push("/dashboard");
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
+    <div className="flex min-h-screen items-center justify-center bg-black text-white">
       <div className="w-full max-w-md space-y-8 rounded-lg p-8 shadow-lg bg-black">
         <div className="text-center">
           <div className="flex justify-center mb-6">
