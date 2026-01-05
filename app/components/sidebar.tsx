@@ -14,8 +14,8 @@ import FinanceIcon from "./icons/finance-icon";
 import StoreIcon from "./icons/store-icon";
 import AccountIcon from "./icons/account-icon";
 import Image from "next/image";
-import { useAppDispatch } from "../redux/hooks";
-import { logout } from "../redux/auth/auth-slice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { logout, logoutUser } from "../redux/auth/auth-slice";
 
 const navLinks = [
   { name: "Dashboard", href: "/dashboard", icon: <DashboardIcon /> },
@@ -80,10 +80,16 @@ export default function Sidebar() {
   const pathname = usePathname() || "/";
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { accessToken } = useAppSelector((x) => x.user);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser({ token: accessToken }));
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout Failed:", error);
+      router.push("/login");
+    }
   };
 
   return (

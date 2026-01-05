@@ -4,9 +4,9 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 const persistConfig = {
-  key: "root",
+  key: "user",
   storage,
-  whitelist: ["user"],
+  // whitelist: ["user"],
 };
 
 const persistedReducer = persistReducer(persistConfig, userReducer);
@@ -23,6 +23,6 @@ export const store = configureStore({
     }),
 });
 
-export const persistor = persistStore(store)
+export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

@@ -32,3 +32,28 @@ export const loginUserService = async (props: {
   const data: LoginResponse = await response.json();
   return data;
 };
+
+export const logoutUserService = async (props: {
+  token: string;
+}): Promise<any> => {
+  const { token } = props;
+
+  const headers = {
+    "Content-Type": "application/json",
+    accept: "application/json",
+    Authorization: "",
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`/api/auth/logout`, {
+    method: "POST",
+    headers,
+  });
+
+  const data = await response.json();
+
+  return data;
+};

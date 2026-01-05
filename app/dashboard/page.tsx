@@ -7,7 +7,7 @@ import { Calendar } from "./components/calendar";
 import EventsSection from "./components/events";
 
 export default function DashboardPage() {
-  const { username } = useAppSelector((x) => x.user);
+  const { username, accessToken } = useAppSelector((x) => x.user);
 
   return (
     <div className="p-4 h-screen overflow-scroll bg-slate-50">

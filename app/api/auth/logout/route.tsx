@@ -2,19 +2,18 @@ import { API_URL } from "@/app/settings";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const { email, password } = await request.json();
-  let body = { email, password };
-  let url = `${API_URL}/auth/login`;
+  const authorization = request.headers.get("Authorization");
 
-  console.log("POST: User Login", url);
+  let url = `${API_URL}/auth/logout`;
+  console.log("POST: User Logout", url);
 
   const response = await fetch(url, {
     method: "POST",
     headers: {
       accept: "application/json",
-      "Content-Type": "application/json", 
-    },  
-    body: JSON.stringify(body),
+      "Content-Type": "application/json",
+      Authorization: `${authorization}`,
+    },
   });
 
   const data = await response.json();

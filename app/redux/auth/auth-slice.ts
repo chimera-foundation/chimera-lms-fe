@@ -1,4 +1,7 @@
-import { loginUserService } from "@/app/services/auth-services";
+import {
+  loginUserService,
+  logoutUserService,
+} from "@/app/services/auth-services";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface UserState {
@@ -23,6 +26,14 @@ export const loginUser = createAsyncThunk(
   "loginUser/POST",
   async (props: { email: string; password: string }) => {
     const response = await loginUserService(props);
+    return response;
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "logoutUser/POST",
+  async (props: { token: string }) => {
+    const response = await logoutUserService(props);
     return response;
   }
 );
@@ -73,6 +84,28 @@ const userSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message as string;
+        state.isAuthenticated = false;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.accessToken = "";
+        state.tokenType = "";
+        state.username = "";
+        state.isAuthenticated = false;
+        state.error = "";
+        if (typeof document !== "undefined") {
+          document.cookie =
+            "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message as string;
+        state.accessToken = "";
+        state.tokenType = "";
         state.isAuthenticated = false;
       });
   },
