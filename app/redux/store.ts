@@ -1,5 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./auth/auth-slice";
+import announcementReducer from "./announcement/announcement-slice";
+import eventReducer from "./event/event-slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -14,6 +16,8 @@ const persistedReducer = persistReducer(persistConfig, userReducer);
 export const store = configureStore({
   reducer: {
     user: persistedReducer,
+    announcement: announcementReducer,
+    event: eventReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

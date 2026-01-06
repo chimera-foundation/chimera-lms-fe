@@ -5,9 +5,22 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import Announcements from "./components/announcements";
 import { Calendar } from "./components/calendar";
 import EventsSection from "./components/events";
+import { useEffect } from "react";
+import { getAllEvents } from "../redux/event/event-slice";
+import { getAllAnnouncements } from "../redux/announcement/announcement-slice";
 
 export default function DashboardPage() {
   const { username, accessToken } = useAppSelector((x) => x.user);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const payload = {
+      token: accessToken,
+    };
+    dispatch(getAllEvents(payload));
+    dispatch(getAllAnnouncements(payload));
+  }, [dispatch]);
 
   return (
     <div className="p-4 h-screen overflow-scroll bg-slate-50">
