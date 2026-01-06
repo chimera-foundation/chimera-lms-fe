@@ -32,39 +32,47 @@ const formatDate = (dateString: string) => {
 };
 
 export default function Announcements() {
-  const { announcement } = useAppSelector((x) => x.announcement);
+  const { announcements } = useAppSelector((x) => x.dashboard);
 
   return (
     <div className="w-full">
       <h2 className="text-xl font-semibold mb-6">Announcement</h2>
-      <div className="flex gap-6 overflow-x-auto max-h-96 lg:w-full w-[680px] no-scrollbar">
-        {announcement.map((announcement) => (
-          <div
-            key={announcement.id}
-            className="bg-white rounded-2xl border border-gray-100 overflow-hidden w-80 h-96 shrink-0"
-          >
-            <div className="w-full h-36 flex items-center justify-center relative">
-              <Image
-                src={announcement.image_url}
-                alt="Chimera Logo"
-                fill={true}
-                className="object-cover"
-              />
-            </div>
+      <div
+        className={`flex gap-6 overflow-x-auto max-h-96 lg:w-full w-[680px] no-scrollbar`}
+      >
+        {announcements.length > 0 ? (
+          announcements.map((announcement) => (
+            <div
+              key={announcement.id}
+              className="bg-white rounded-2xl border border-gray-100 overflow-hidden w-80 h-96 shrink-0"
+            >
+              <div className="w-full h-36 flex items-center justify-center relative">
+                <Image
+                  src={announcement.image_url}
+                  alt="Chimera Logo"
+                  fill={true}
+                  className="object-cover"
+                />
+              </div>
 
-            <div className="p-5">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                {announcement.title}
-              </h3>
-              <p className="text-sm text-gray-500 mb-3">
-                {formatDate(announcement.published_at)}
-              </p>
-              <p className="text-xs text-gray-600 leading-relaxed line-clamp-6">
-                {announcement.content}
-              </p>
+              <div className="p-5">
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  {announcement.title}
+                </h3>
+                <p className="text-sm text-gray-500 mb-3">
+                  {formatDate(announcement.published_at)}
+                </p>
+                <p className="text-xs text-gray-600 leading-relaxed line-clamp-6">
+                  {announcement.content}
+                </p>
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="flex items-center justify-center text-gray-500 text-center">
+            <p>There are no announcements</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

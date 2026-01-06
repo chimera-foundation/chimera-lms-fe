@@ -8,19 +8,32 @@ import EventsSection from "./components/events";
 import { useEffect } from "react";
 import { getAllEvents } from "../redux/event/event-slice";
 import { getAllAnnouncements } from "../redux/announcement/announcement-slice";
+import {
+  getDashboard,
+  getDashboardAnnouncements,
+  getDashboardAssignments,
+  getDashboardDailySchedule,
+  getDashboardExams,
+  getDashboardUpcomingDeadlines,
+} from "../redux/dashboard/dashboard-slice";
+import ScheduleSection from "./components/schedule";
 
 export default function DashboardPage() {
   const { username, accessToken } = useAppSelector((x) => x.user);
-
+  const { dashboard, assignments, announcements, exam, upcoming_deadlines } =
+    useAppSelector((x) => x.dashboard);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const payload = {
       token: accessToken,
     };
-    dispatch(getAllEvents(payload));
-    dispatch(getAllAnnouncements(payload));
-  }, [dispatch]);
+    dispatch(getDashboard(payload));
+    dispatch(getDashboardAssignments(payload));
+    dispatch(getDashboardAnnouncements(payload));
+    dispatch(getDashboardExams(payload));
+    dispatch(getDashboardUpcomingDeadlines(payload));
+  }, []);
 
   return (
     <div className="p-4 h-screen overflow-scroll bg-slate-50">
@@ -43,7 +56,7 @@ export default function DashboardPage() {
           <EventsSection title="Events" />
         </div>
         <div className="h-118 bg-white shadow-md rounded-md p-4">
-          <EventsSection title="Schedule" />
+          <ScheduleSection />
         </div>
         <div className="h-118 bg-white shadow-md rounded-md p-4 overflow-hidden">
           <Announcements />
@@ -64,7 +77,7 @@ export default function DashboardPage() {
           <EventsSection title="Events" />
         </div>
         <div className="col-span-3 row-start-2 bg-white shadow-md rounded-md p-4">
-          <EventsSection title="Schedule" />
+          <ScheduleSection />
         </div>
         <div className="col-span-7 col-start-4 row-start-2 bg-white shadow-md rounded-md p-4 overflow-hidden">
           <Announcements />

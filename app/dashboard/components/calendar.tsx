@@ -1,11 +1,61 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChevronDownIcon from "@/app/components/icons/chevron-down-icon";
 import ChevronUpIcon from "@/app/components/icons/chevron-up-icon";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import {
+  getDashboardDailySchedule,
+  getDashboardMonthlyEvents,
+} from "@/app/redux/dashboard/dashboard-slice";
 
 export function Calendar() {
+  const { monthlyEvents } = useAppSelector((x) => x.dashboard);
+  const { accessToken } = useAppSelector((x) => x.user);
+  const dispatch = useAppDispatch();
   const [currentDate, setCurrentDate] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
+
+  const formatDateToYYYYMMDD = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatMonthToYYYYMM = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  };
+
+  useEffect(() => {
+    const formattedDate = formatDateToYYYYMMDD(currentDate);
+    const formattedMonth = formatMonthToYYYYMM(currentDate);
+
+    dispatch(
+      getDashboardDailySchedule({
+        token: accessToken,
+        date: formattedDate,
+      })
+    );
+
+    dispatch(
+      getDashboardMonthlyEvents({
+        token: accessToken,
+        date: formattedMonth,
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    const formattedMonth = formatMonthToYYYYMM(currentDate);
+    dispatch(
+      getDashboardMonthlyEvents({
+        token: accessToken,
+        date: formattedMonth,
+      })
+    );
+  }, [currentDate, accessToken, dispatch]);
 
   const monthNames = [
     "January",
@@ -67,7 +117,23 @@ export function Calendar() {
         day
       );
       setSelectedDate(newDate);
+
+      const formattedDate = formatDateToYYYYMMDD(newDate);
+
+      dispatch(
+        getDashboardDailySchedule({
+          token: accessToken,
+          date: formattedDate,
+        })
+      );
     }
+  };
+
+  const hasEvent = (day: number) => {
+    const dateString = formatDateToYYYYMMDD(
+      new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+    );
+    return monthlyEvents?.includes(dateString);
   };
 
   const days = generateCalendarDays();
@@ -117,16 +183,21 @@ export function Calendar() {
             day === selectedDate.getDate() &&
             currentDate.getMonth() === selectedDate.getMonth() &&
             currentDate.getFullYear() === selectedDate.getFullYear();
+          const eventMarker = day && hasEvent(day as number);
           return (
             <div
               key={index}
               onClick={() => handleDateClick(day as number)}
               className={`
-                flex items-center justify-center text-xs rounded transition-all duration-100
-                ${day ? "hover:bg-gray-50 cursor-pointer" : ""}
+                flex flex-col items-center justify-center text-xs rounded-[10px] transition-all duration-100`}
+            >
+              <span
+                className={`w-8 h-8 flex items-center justify-center rounded-[10px] font-medium ${
+                  day ? "hover:bg-gray-50 cursor-pointer" : ""
+                }
                 ${
                   isSelected
-                    ? "bg-gray-800 text-white font-semibold hover:bg-gray-700"
+                    ? "bg-gray-800! text-white font-semibold hover:bg-gray-700"
                     : ""
                 }
                 ${
@@ -135,10 +206,12 @@ export function Calendar() {
                     : ""
                 }
                 ${day && !isSelected ? "text-gray-900" : ""}
-                ${!day ? "text-gray-300" : ""}
-              `}
-            >
-              {day || ""}
+                ${!day ? "text-gray-300" : ""} ${
+                  eventMarker ? "bg-zinc-100" : ""
+                }`}
+              >
+                {day || ""}
+              </span>
             </div>
           );
         })}

@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./auth/auth-slice";
 import announcementReducer from "./announcement/announcement-slice";
 import eventReducer from "./event/event-slice";
+import dashboardReducer from "./dashboard/dashboard-slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -18,6 +19,7 @@ export const store = configureStore({
     user: persistedReducer,
     announcement: announcementReducer,
     event: eventReducer,
+    dashboard: dashboardReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
