@@ -7,6 +7,7 @@ import {
   getDashboardDailySchedule,
   getDashboardMonthlyEvents,
 } from "@/app/redux/dashboard/dashboard-slice";
+import { getAllEvents } from "@/app/redux/event/event-slice";
 
 export function Calendar() {
   const { monthlyEvents } = useAppSelector((x) => x.dashboard);
@@ -28,9 +29,24 @@ export function Calendar() {
     return `${year}-${month}`;
   };
 
+  const getMonthDateRange = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+
+    const lastDay = new Date(year, month + 1, 0);
+
+    return {
+      start_date: formatDateToYYYYMMDD(firstDay),
+      end_date: formatDateToYYYYMMDD(lastDay),
+    };
+  };
+
   useEffect(() => {
     const formattedDate = formatDateToYYYYMMDD(currentDate);
     const formattedMonth = formatMonthToYYYYMM(currentDate);
+    const { start_date, end_date } = getMonthDateRange(currentDate);
 
     dispatch(
       getDashboardDailySchedule({
@@ -45,14 +61,31 @@ export function Calendar() {
         date: formattedMonth,
       })
     );
+
+    dispatch(
+      getAllEvents({
+        token: accessToken,
+        start_date,
+        end_date,
+      })
+    );
   }, []);
 
   useEffect(() => {
     const formattedMonth = formatMonthToYYYYMM(currentDate);
+    const { start_date, end_date } = getMonthDateRange(currentDate);
     dispatch(
       getDashboardMonthlyEvents({
         token: accessToken,
         date: formattedMonth,
+      })
+    );
+
+    dispatch(
+      getAllEvents({
+        token: accessToken,
+        start_date,
+        end_date,
       })
     );
   }, [currentDate, accessToken, dispatch]);

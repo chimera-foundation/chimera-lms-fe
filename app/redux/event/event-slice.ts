@@ -2,11 +2,13 @@ import {
   EventItem,
   getAllEventsService,
   GetEventsResponse,
+  HolidayItem,
 } from "@/app/services/event-services";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 interface EventState {
   events: EventItem[];
+  holidays: HolidayItem[] | [] | null;
   total: number;
   page: number;
   per_page: number;
@@ -16,6 +18,7 @@ interface EventState {
 
 const initialState: EventState = {
   events: [],
+  holidays: null,
   total: 0,
   page: 0,
   per_page: 0,
@@ -25,7 +28,7 @@ const initialState: EventState = {
 
 export const getAllEvents = createAsyncThunk(
   "getAllEvents/GET",
-  async (props: { token: string }) => {
+  async (props: { token: string; start_date?: string; end_date?: string }) => {
     const response = await getAllEventsService(props);
     return response;
   }
@@ -50,6 +53,7 @@ const eventSlice = createSlice({
         (state, action: PayloadAction<GetEventsResponse>) => {
           state.loading = false;
           state.events = action.payload.items;
+          state.holidays = action.payload.holidays;
           state.total = action.payload.total;
           state.page = action.payload.page;
           state.per_page = action.payload.per_page;

@@ -11,17 +11,25 @@ export interface EventItem {
   is_active: boolean;
 }
 
+export interface HolidayItem {
+  date: string;
+  name: string;
+}
+
 export interface GetEventsResponse {
   total: number;
   page: number;
   per_page: number;
   items: EventItem[];
+  holidays: HolidayItem[];
 }
 
 export const getAllEventsService = async (props: {
   token: string;
+  start_date?: string;
+  end_date?: string;
 }): Promise<GetEventsResponse> => {
-  const { token } = props;
+  const { token, start_date, end_date } = props;
 
   const headers = {
     "Content-Type": "application/json",
@@ -33,7 +41,14 @@ export const getAllEventsService = async (props: {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`/api/events`, {
+  let params = {
+    ...(start_date && { start_date: start_date }),
+    ...(end_date && { end_date: end_date }),
+  };
+
+  const stringParams = new URLSearchParams(params as any).toString();
+  console.log(stringParams);
+  const response = await fetch(`/api/events?` + stringParams, {
     method: "GET",
     headers,
   });
