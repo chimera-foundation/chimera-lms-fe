@@ -1,6 +1,5 @@
 interface LoginResponse {
   username: string;
-  access_token: string;
   token_type: string;
 }
 
@@ -33,20 +32,12 @@ export const loginUserService = async (props: {
   return data;
 };
 
-export const logoutUserService = async (props: {
-  token: string;
-}): Promise<any> => {
-  const { token } = props;
-
+export const logoutUserService = async (): Promise<any> => {
   const headers = {
     "Content-Type": "application/json",
     accept: "application/json",
     Authorization: "",
   };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
 
   const response = await fetch(`/api/auth/logout`, {
     method: "POST",
@@ -56,4 +47,16 @@ export const logoutUserService = async (props: {
   const data = await response.json();
 
   return data;
+};
+
+export const getMeService = async () => {
+  const res = await fetch("/api/auth/me", {
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Not authenticated");
+  }
+
+  return res.json();
 };

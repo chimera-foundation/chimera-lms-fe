@@ -47,7 +47,7 @@ export const getAllEventsService = async (props: {
   };
 
   const stringParams = new URLSearchParams(params as any).toString();
-  console.log(stringParams);
+
   const response = await fetch(`/api/events?` + stringParams, {
     method: "GET",
     headers,

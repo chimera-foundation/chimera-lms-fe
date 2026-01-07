@@ -1,19 +1,25 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { loginUser } from "../redux/auth/auth-slice";
+import { loginUser, clearUsers } from "../redux/auth/auth-slice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { useRouter } from "next/navigation";
-import { API_URL } from "../settings";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { error, loading, accessToken, isAuthenticated } = useAppSelector(
-    (x) => x.user
-  );
+  const [showExpiredMessage, setShowExpiredMessage] = useState(false);
+  const { error, loading, isAuthenticated } = useAppSelector((x) => x.user);
+
+  useEffect(() => {
+    if (searchParams.get("expired") === "true") {
+      setShowExpiredMessage(true);
+      dispatch(clearUsers());
+    }
+  }, [searchParams, dispatch]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -23,23 +29,14 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShowExpiredMessage(false);
 
     try {
-      const result = await dispatch(
-        loginUser({ email: username, password })
-      ).unwrap();
-
-      if (result.access_token) {
-        router.push("/dashboard");
-      }
+      await dispatch(loginUser({ email: username, password })).unwrap();
     } catch (err) {
       console.error("Login failed:", err);
     }
   };
-
-  if (isAuthenticated) {
-    return null;
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black text-white">
@@ -61,6 +58,13 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          {showExpiredMessage && (
+            <div className="rounded-md bg-yellow-900/20 border border-yellow-900 p-3">
+              <p className="text-sm text-yellow-400">
+                Your session has expired. Please login again.
+              </p>
+            </div>
+          )}
           {error && (
             <div className="rounded-md bg-red-900/20 border border-red-900 p-3">
               <p className="text-sm text-red-400">{error}</p>

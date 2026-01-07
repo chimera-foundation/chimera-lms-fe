@@ -1,12 +1,11 @@
 import {
+  getMeService,
   loginUserService,
   logoutUserService,
 } from "@/app/services/auth-services";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface UserState {
-  accessToken: string;
-  tokenType: string;
   loading: boolean;
   error: string;
   isAuthenticated: boolean;
@@ -14,8 +13,6 @@ interface UserState {
 }
 
 const initialState: UserState = {
-  accessToken: "",
-  tokenType: "",
   loading: false,
   error: "",
   isAuthenticated: false,
@@ -30,11 +27,19 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-export const logoutUser = createAsyncThunk(
-  "logoutUser/POST",
-  async (props: { token: string }) => {
-    const response = await logoutUserService(props);
-    return response;
+export const logoutUser = createAsyncThunk("logoutUser/POST", async () => {
+  const response = await logoutUserService();
+  return response;
+});
+
+export const hydrateSession = createAsyncThunk(
+  "user/hydrate",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getMeService();
+    } catch {
+      return rejectWithValue("Session expired");
+    }
   }
 );
 
@@ -43,24 +48,14 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     clearUsers(state) {
-      state.accessToken = "";
-      state.tokenType = "";
       state.error = "";
       state.isAuthenticated = false;
-      if (typeof document !== "undefined") {
-        document.cookie =
-          "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      }
+      state.username = "";
     },
     logout(state) {
-      state.accessToken = "";
-      state.tokenType = "";
       state.isAuthenticated = false;
       state.error = "";
-      if (typeof document !== "undefined") {
-        document.cookie =
-          "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      }
+      state.username = "";
     },
   },
   extraReducers: (builder) => {
@@ -71,15 +66,9 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.accessToken = action.payload.access_token;
-        state.tokenType = action.payload.token_type;
         state.username = action.payload.username;
         state.isAuthenticated = true;
         state.error = "";
-
-        if (typeof document !== "undefined") {
-          document.cookie = `access_token=${action.payload.access_token}; path=/; max-age=86400; SameSite=Lax`;
-        }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -91,21 +80,27 @@ const userSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.loading = false;
-        state.accessToken = "";
-        state.tokenType = "";
         state.username = "";
         state.isAuthenticated = false;
         state.error = "";
-        if (typeof document !== "undefined") {
-          document.cookie =
-            "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        }
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message as string;
-        state.accessToken = "";
-        state.tokenType = "";
+        state.isAuthenticated = false;
+      })
+      .addCase(hydrateSession.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(hydrateSession.fulfilled, (state, action) => {
+        state.loading = false;
+        state.username = action.payload.username;
+        state.isAuthenticated = true;
+        state.error = "";
+      })
+      .addCase(hydrateSession.rejected, (state) => {
+        state.loading = false;
+        state.username = "";
         state.isAuthenticated = false;
       });
   },
