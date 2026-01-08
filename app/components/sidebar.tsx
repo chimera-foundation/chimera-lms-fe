@@ -80,11 +80,10 @@ export default function Sidebar() {
   const pathname = usePathname() || "/";
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { accessToken } = useAppSelector((x) => x.user);
 
   const handleLogout = async () => {
     try {
-      await dispatch(logoutUser({ token: accessToken }));
+      await dispatch(logoutUser());
       router.push("/login");
     } catch (error) {
       console.error("Logout Failed:", error);

@@ -61,24 +61,13 @@ export interface MonthlyEventsResponse {
   dates_with_events: string[];
 }
 
-export const getDashboardService = async (props: {
-  token: string;
-}): Promise<DashboardItem> => {
-  const { token } = props;
-
-  const headers = {
-    "Content-Type": "application/json",
-    accept: "application/json",
-    Authorization: "",
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
+export const getDashboardService = async (): Promise<DashboardItem> => {
   const response = await fetch(`/api/dashboard/student`, {
     method: "GET",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
   });
 
   const data = await response.json();
@@ -86,24 +75,15 @@ export const getDashboardService = async (props: {
   return data;
 };
 
-export const getDashboardAssignmentsService = async (props: {
-  token: string;
-}): Promise<AssignmentsItem[]> => {
-  const { token } = props;
-
-  const headers = {
-    "Content-Type": "application/json",
-    accept: "application/json",
-    Authorization: "",
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
+export const getDashboardAssignmentsService = async (): Promise<
+  AssignmentsItem[]
+> => {
   const response = await fetch(`/api/dashboard/assignments`, {
     method: "GET",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
   });
 
   const data = await response.json();
@@ -111,24 +91,15 @@ export const getDashboardAssignmentsService = async (props: {
   return data;
 };
 
-export const getDashboardAnnouncementsService = async (props: {
-  token: string;
-}): Promise<DashboardAnnouncementItem[]> => {
-  const { token } = props;
-
-  const headers = {
-    "Content-Type": "application/json",
-    accept: "application/json",
-    Authorization: "",
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
+export const getDashboardAnnouncementsService = async (): Promise<
+  DashboardAnnouncementItem[]
+> => {
   const response = await fetch(`/api/dashboard/announcements`, {
     method: "GET",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
   });
 
   const data = await response.json();
@@ -136,24 +107,15 @@ export const getDashboardAnnouncementsService = async (props: {
   return data;
 };
 
-export const getDashboardExamsService = async (props: {
-  token: string;
-}): Promise<DashboardExamItem[]> => {
-  const { token } = props;
-
-  const headers = {
-    "Content-Type": "application/json",
-    accept: "application/json",
-    Authorization: "",
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
+export const getDashboardExamsService = async (): Promise<
+  DashboardExamItem[]
+> => {
   const response = await fetch(`/api/dashboard/exams`, {
     method: "GET",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
   });
 
   const data = await response.json();
@@ -161,24 +123,15 @@ export const getDashboardExamsService = async (props: {
   return data;
 };
 
-export const getDashboardUpcomingDeadlinesService = async (props: {
-  token: string;
-}): Promise<DashboardDeadlinesItem[]> => {
-  const { token } = props;
-
-  const headers = {
-    "Content-Type": "application/json",
-    accept: "application/json",
-    Authorization: "",
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
+export const getDashboardUpcomingDeadlinesService = async (): Promise<
+  DashboardDeadlinesItem[]
+> => {
   const response = await fetch(`/api/dashboard/deadline`, {
     method: "GET",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
   });
 
   const data = await response.json();
@@ -187,24 +140,16 @@ export const getDashboardUpcomingDeadlinesService = async (props: {
 };
 
 export const getDashboardDailyScheduleService = async (props: {
-  token: string;
   date: string;
 }): Promise<DailyScheduleResponse> => {
-  const { token, date } = props;
-
-  const headers = {
-    "Content-Type": "application/json",
-    accept: "application/json",
-    Authorization: "",
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+  const { date } = props;
 
   const response = await fetch(`/api/dashboard/schedule/daily?date=${date}`, {
     method: "GET",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
   });
 
   const data = await response.json();
@@ -213,24 +158,16 @@ export const getDashboardDailyScheduleService = async (props: {
 };
 
 export const getDashboardMonthlyEventsService = async (props: {
-  token: string;
   date: string;
 }): Promise<MonthlyEventsResponse> => {
-  const { token, date } = props;
-
-  const headers = {
-    "Content-Type": "application/json",
-    accept: "application/json",
-    Authorization: "",
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+  const { date } = props;
 
   const response = await fetch(`/api/dashboard/schedule/monthly?date=${date}`, {
     method: "GET",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
   });
 
   const data = await response.json();

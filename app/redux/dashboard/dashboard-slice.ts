@@ -49,49 +49,46 @@ const initialState: DashboardState = {
   monthlyEvents: [],
 };
 
-export const getDashboard = createAsyncThunk(
-  "getDashboard/GET",
-  async (props: { token: string }) => {
-    const response = await getDashboardService(props);
-    return response;
-  }
-);
+export const getDashboard = createAsyncThunk("getDashboard/GET", async () => {
+  const response = await getDashboardService();
+  return response;
+});
 
 export const getDashboardAssignments = createAsyncThunk(
   "getDashboardAssignments/GET",
-  async (props: { token: string }) => {
-    const response = await getDashboardAssignmentsService(props);
+  async () => {
+    const response = await getDashboardAssignmentsService();
     return response;
   }
 );
 
 export const getDashboardAnnouncements = createAsyncThunk(
   "getDashboardAnnouncements/GET",
-  async (props: { token: string }) => {
-    const response = await getDashboardAnnouncementsService(props);
+  async () => {
+    const response = await getDashboardAnnouncementsService();
     return response;
   }
 );
 
 export const getDashboardExams = createAsyncThunk(
   "getDashboardExams/GET",
-  async (props: { token: string }) => {
-    const response = await getDashboardExamsService(props);
+  async () => {
+    const response = await getDashboardExamsService();
     return response;
   }
 );
 
 export const getDashboardUpcomingDeadlines = createAsyncThunk(
   "getDashboardUpcomingDeadlines/GET",
-  async (props: { token: string }) => {
-    const response = await getDashboardUpcomingDeadlinesService(props);
+  async () => {
+    const response = await getDashboardUpcomingDeadlinesService();
     return response;
   }
 );
 
 export const getDashboardDailySchedule = createAsyncThunk(
   "getDashboardDailySchedule/GET",
-  async (props: { token: string; date: string }) => {
+  async (props: { date: string }) => {
     const response = await getDashboardDailyScheduleService(props);
     return response;
   }
@@ -99,7 +96,7 @@ export const getDashboardDailySchedule = createAsyncThunk(
 
 export const getDashboardMonthlyEvents = createAsyncThunk(
   "getDashboardMonthlyEvents/GET",
-  async (props: { token: string; date: string }) => {
+  async (props: { date: string }) => {
     const response = await getDashboardMonthlyEventsService(props);
     return response;
   }

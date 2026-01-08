@@ -1,8 +1,16 @@
 import { API_URL } from "@/app/settings";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  const authorization = request.headers.get("Authorization");
+  const cookieStore = cookies();
+
+  const accessToken = (await cookieStore).get("access_token")?.value;
+
+  if (!accessToken) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const date = searchParams.get("date");
   let url = `${API_URL}/dashboard/schedule?date=${date}`;
@@ -13,7 +21,7 @@ export async function GET(request: Request) {
     headers: {
       accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `${authorization}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   });
 

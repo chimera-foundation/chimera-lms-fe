@@ -1,11 +1,18 @@
 import { API_URL } from "@/app/settings";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  const cookieStore = cookies();
+
+  const accessToken = (await cookieStore).get("access_token")?.value;
+
+  if (!accessToken) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
   const searchParams = request.nextUrl.searchParams;
   const start_date = searchParams.get("start_date");
   const end_date = searchParams.get("end_date");
-  const authorization = request.headers.get("Authorization");
 
   let params = {
     ...(start_date && { start_date }),
@@ -22,7 +29,7 @@ export async function GET(request: NextRequest) {
     headers: {
       accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `${authorization}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   });
 

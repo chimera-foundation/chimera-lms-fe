@@ -25,21 +25,10 @@ export interface GetEventsResponse {
 }
 
 export const getAllEventsService = async (props: {
-  token: string;
   start_date?: string;
   end_date?: string;
 }): Promise<GetEventsResponse> => {
-  const { token, start_date, end_date } = props;
-
-  const headers = {
-    "Content-Type": "application/json",
-    accept: "application/json",
-    Authorization: "",
-  };
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+  const { start_date, end_date } = props;
 
   let params = {
     ...(start_date && { start_date: start_date }),
@@ -50,7 +39,10 @@ export const getAllEventsService = async (props: {
 
   const response = await fetch(`/api/events?` + stringParams, {
     method: "GET",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
   });
 
   const data = await response.json();

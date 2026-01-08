@@ -17,22 +17,20 @@ import {
   getDashboardUpcomingDeadlines,
 } from "../redux/dashboard/dashboard-slice";
 import ScheduleSection from "./components/schedule";
+import Assignments from "./components/assignments";
 
 export default function DashboardPage() {
-  const { username, accessToken } = useAppSelector((x) => x.user);
+  const { username } = useAppSelector((x) => x.user);
   const { dashboard, assignments, announcements, exam, upcoming_deadlines } =
     useAppSelector((x) => x.dashboard);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const payload = {
-      token: accessToken,
-    };
-    dispatch(getDashboard(payload));
-    dispatch(getDashboardAssignments(payload));
-    dispatch(getDashboardAnnouncements(payload));
-    dispatch(getDashboardExams(payload));
-    dispatch(getDashboardUpcomingDeadlines(payload));
+    dispatch(getDashboard());
+    dispatch(getDashboardAssignments());
+    dispatch(getDashboardAnnouncements());
+    dispatch(getDashboardExams());
+    dispatch(getDashboardUpcomingDeadlines());
   }, []);
 
   return (
@@ -61,8 +59,8 @@ export default function DashboardPage() {
         <div className="h-118 bg-white shadow-md rounded-md p-4 overflow-hidden">
           <Announcements />
         </div>
-        <div className="h-86 bg-white rounded-lg border border-gray-200 p-4">
-          <h3 className="text-lg font-semibold">Assignment TODO</h3>
+        <div className="h-86 bg-white shadow-md rounded-md p-4 overflow-hidden">
+          <Assignments />
         </div>
         <div className="h-86 bg-white rounded-lg border border-gray-200 p-4">
           <h3 className="text-lg font-semibold">Exam TODO</h3>
@@ -82,8 +80,8 @@ export default function DashboardPage() {
         <div className="col-span-7 col-start-4 row-start-2 bg-white shadow-md rounded-md p-4 overflow-hidden">
           <Announcements />
         </div>
-        <div className="col-span-5 row-start-3 bg-white rounded-lg border border-gray-200 p-4">
-          <h3 className="text-lg font-semibold">Assignment TODO</h3>
+        <div className="col-span-5 row-start-3 bg-white shadow-md rounded-md p-4">
+          <Assignments />
         </div>
         <div className="col-span-5 col-start-6 row-start-3 bg-white rounded-lg border border-gray-200 p-4">
           <h3 className="text-lg font-semibold">Exam TODO</h3>

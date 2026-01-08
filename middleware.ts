@@ -23,13 +23,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (expiry) {
-    const remainingMs = parseInt(expiry) - Date.now();
-    console.log("===========================");
-    console.log("Cookie remaining seconds:", Math.floor(remainingMs / 1000));
-    console.log("===========================");
-  }
-
   return NextResponse.next();
 }
 

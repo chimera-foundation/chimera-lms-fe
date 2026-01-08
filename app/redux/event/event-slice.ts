@@ -28,7 +28,7 @@ const initialState: EventState = {
 
 export const getAllEvents = createAsyncThunk(
   "getAllEvents/GET",
-  async (props: { token: string; start_date?: string; end_date?: string }) => {
+  async (props: { start_date?: string; end_date?: string }) => {
     const response = await getAllEventsService(props);
     return response;
   }

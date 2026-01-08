@@ -11,7 +11,6 @@ import { getAllEvents } from "@/app/redux/event/event-slice";
 
 export function Calendar() {
   const { monthlyEvents } = useAppSelector((x) => x.dashboard);
-  const { accessToken } = useAppSelector((x) => x.user);
   const dispatch = useAppDispatch();
   const [currentDate, setCurrentDate] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
@@ -50,21 +49,18 @@ export function Calendar() {
 
     dispatch(
       getDashboardDailySchedule({
-        token: accessToken,
         date: formattedDate,
       })
     );
 
     dispatch(
       getDashboardMonthlyEvents({
-        token: accessToken,
         date: formattedMonth,
       })
     );
 
     dispatch(
       getAllEvents({
-        token: accessToken,
         start_date,
         end_date,
       })
@@ -76,19 +72,17 @@ export function Calendar() {
     const { start_date, end_date } = getMonthDateRange(currentDate);
     dispatch(
       getDashboardMonthlyEvents({
-        token: accessToken,
         date: formattedMonth,
       })
     );
 
     dispatch(
       getAllEvents({
-        token: accessToken,
         start_date,
         end_date,
       })
     );
-  }, [currentDate, accessToken, dispatch]);
+  }, [currentDate, dispatch]);
 
   const monthNames = [
     "January",
@@ -155,7 +149,6 @@ export function Calendar() {
 
       dispatch(
         getDashboardDailySchedule({
-          token: accessToken,
           date: formattedDate,
         })
       );
