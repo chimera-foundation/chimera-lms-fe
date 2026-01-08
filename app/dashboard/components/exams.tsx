@@ -74,7 +74,7 @@ export default function Exams() {
   return (
     <div className="h-full flex flex-col overflow-hidden">
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
-        <h2 className="text-lg font-bold text-gray-900">Assignment</h2>
+        <h2 className="text-lg font-bold text-gray-900">Exam</h2>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">
             {currentMonth.toLocaleDateString("en-US", {
