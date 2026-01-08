@@ -26,18 +26,18 @@ const statusConfig = {
   },
 };
 
-export default function Assignments() {
-  const { assignments, loading } = useAppSelector((x) => x.dashboard);
+export default function Exams() {
+  const { exam, loading } = useAppSelector((x) => x.dashboard);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const getStatusCount = (status: string) => {
     return (
-      assignments?.status_counts?.find((s) => s.status.toLowerCase() === status)
+      exam?.status_counts?.find((s) => s.status.toLowerCase() === status)
         ?.count || 0
     );
   };
 
-  console.log(assignments?.status_counts);
+  console.log(exam?.status_counts);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -157,8 +157,8 @@ export default function Assignments() {
                   Loading...
                 </td>
               </tr>
-            ) : assignments?.items && assignments.items.length > 0 ? (
-              assignments.items.map((assignment) => {
+            ) : exam?.items && exam.items.length > 0 ? (
+              exam.items.map((assignment) => {
                 const statusKey =
                   assignment.status.toLowerCase() as keyof typeof statusConfig;
                 const config = statusConfig[statusKey] || statusConfig.pending;
@@ -193,7 +193,7 @@ export default function Assignments() {
                   colSpan={5}
                   className="text-center py-6 text-sm text-gray-500"
                 >
-                  No assignments found
+                  No exam found
                 </td>
               </tr>
             )}

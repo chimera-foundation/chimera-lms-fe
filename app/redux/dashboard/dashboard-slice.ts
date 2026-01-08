@@ -7,6 +7,7 @@ import {
   DashboardDeadlinesItem,
   DashboardExamItem,
   DashboardItem,
+  Exams,
   getDashboardAnnouncementsService,
   getDashboardAssignmentsService,
   getDashboardDailyScheduleService,
@@ -22,7 +23,7 @@ interface DashboardState {
   dashboard: DashboardItem | null;
   assignments: Assignments | null;
   announcements: DashboardAnnouncementItem[] | [];
-  exam: DashboardExamItem[] | [];
+  exam: Exams | null;
   upcoming_deadlines: DashboardDeadlinesItem[] | [];
   daily_schedule: DailyScheduleItem[] | [];
   loading: boolean;
@@ -34,7 +35,7 @@ const initialState: DashboardState = {
   dashboard: null,
   assignments: null,
   announcements: [],
-  exam: [],
+  exam: null,
   upcoming_deadlines: [],
   daily_schedule: [],
   loading: false,
@@ -145,7 +146,7 @@ const dashboardSlice = createSlice({
       })
       .addCase(
         getDashboardExams.fulfilled,
-        (state, action: PayloadAction<DashboardExamItem[]>) => {
+        (state, action: PayloadAction<Exams>) => {
           state.loading = false;
           state.exam = action.payload;
         }

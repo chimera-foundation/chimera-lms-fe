@@ -50,6 +50,11 @@ export interface DashboardExamItem {
   attachment_type: string;
 }
 
+export interface Exams {
+  items: DashboardExamItem[] | [];
+  status_counts: StatusCountsItem[] | [];
+}
+
 export interface DashboardDeadlinesItem {
   id: string;
   title: string;
@@ -124,9 +129,7 @@ export const getDashboardAnnouncementsService = async (): Promise<
   return data;
 };
 
-export const getDashboardExamsService = async (): Promise<
-  DashboardExamItem[]
-> => {
+export const getDashboardExamsService = async (): Promise<Exams> => {
   const response = await fetch(`/api/dashboard/exams`, {
     method: "GET",
     headers: {
