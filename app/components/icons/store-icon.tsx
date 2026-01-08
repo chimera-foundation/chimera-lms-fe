@@ -1,6 +1,10 @@
 import React from "react";
 
-export default function StoreIcon() {
+export default function StoreIcon({
+  className = "size-6",
+}: {
+  className?: string;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -8,7 +12,7 @@ export default function StoreIcon() {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="size-6"
+      className={className}
     >
       <path
         strokeLinecap="round"

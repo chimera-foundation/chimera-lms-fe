@@ -1,5 +1,23 @@
-import { AssignmentsItem } from "../redux/dashboard/dashboard-slice";
 import { AnnouncementItem } from "./announcement-services";
+
+export interface AssignmentsItem {
+  id: string;
+  title: string;
+  subject: string;
+  due_date: string;
+  status: string;
+  attachment_type: string;
+}
+
+export interface StatusCountsItem {
+  status: string;
+  count: number;
+}
+
+export interface Assignments {
+  items: AssignmentsItem[] | [];
+  status_counts: StatusCountsItem[] | [];
+}
 
 export interface DashboardItem {
   user_id: string;
@@ -75,21 +93,20 @@ export const getDashboardService = async (): Promise<DashboardItem> => {
   return data;
 };
 
-export const getDashboardAssignmentsService = async (): Promise<
-  AssignmentsItem[]
-> => {
-  const response = await fetch(`/api/dashboard/assignments`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      accept: "application/json",
-    },
-  });
+export const getDashboardAssignmentsService =
+  async (): Promise<Assignments> => {
+    const response = await fetch(`/api/dashboard/assignments`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
+    });
 
-  const data = await response.json();
+    const data = await response.json();
 
-  return data;
-};
+    return data;
+  };
 
 export const getDashboardAnnouncementsService = async (): Promise<
   DashboardAnnouncementItem[]

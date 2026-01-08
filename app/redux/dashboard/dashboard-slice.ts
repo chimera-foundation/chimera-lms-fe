@@ -1,4 +1,6 @@
 import {
+  Assignments,
+  AssignmentsItem,
   DailyScheduleItem,
   DailyScheduleResponse,
   DashboardAnnouncementItem,
@@ -16,18 +18,9 @@ import {
 } from "@/app/services/dashboard-services";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
-export interface AssignmentsItem {
-  id: string;
-  title: string;
-  subject: string;
-  due_date: string;
-  status: string;
-  attachment_type: string;
-}
-
 interface DashboardState {
   dashboard: DashboardItem | null;
-  assignments: AssignmentsItem[] | [];
+  assignments: Assignments | null;
   announcements: DashboardAnnouncementItem[] | [];
   exam: DashboardExamItem[] | [];
   upcoming_deadlines: DashboardDeadlinesItem[] | [];
@@ -39,7 +32,7 @@ interface DashboardState {
 
 const initialState: DashboardState = {
   dashboard: null,
-  assignments: [],
+  assignments: null,
   announcements: [],
   exam: [],
   upcoming_deadlines: [],
@@ -126,7 +119,7 @@ const dashboardSlice = createSlice({
       })
       .addCase(
         getDashboardAssignments.fulfilled,
-        (state, action: PayloadAction<AssignmentsItem[]>) => {
+        (state, action: PayloadAction<Assignments>) => {
           state.loading = false;
           state.assignments = action.payload;
         }

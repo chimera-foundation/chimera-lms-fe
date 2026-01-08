@@ -59,7 +59,7 @@ export default function DashboardPage() {
         <div className="h-118 bg-white shadow-md rounded-md p-4 overflow-hidden">
           <Announcements />
         </div>
-        <div className="h-86 bg-white shadow-md rounded-md p-4 overflow-hidden">
+        <div className="h-120 bg-white shadow-md rounded-md p-4 overflow-hidden">
           <Assignments />
         </div>
         <div className="h-86 bg-white rounded-lg border border-gray-200 p-4">
