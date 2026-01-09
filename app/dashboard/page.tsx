@@ -24,9 +24,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     dispatch(getDashboard());
-    dispatch(getDashboardAssignments());
     dispatch(getDashboardAnnouncements());
-    dispatch(getDashboardExams());
     dispatch(getDashboardUpcomingDeadlines());
     dispatch(
       getAllSchedules({

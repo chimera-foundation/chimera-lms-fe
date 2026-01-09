@@ -50,8 +50,8 @@ export const getDashboard = createAsyncThunk("getDashboard/GET", async () => {
 
 export const getDashboardAssignments = createAsyncThunk(
   "getDashboardAssignments/GET",
-  async () => {
-    const response = await getDashboardAssignmentsService();
+  async (props: { start_date?: string; end_date?: string }) => {
+    const response = await getDashboardAssignmentsService(props);
     return response;
   }
 );
@@ -66,8 +66,8 @@ export const getDashboardAnnouncements = createAsyncThunk(
 
 export const getDashboardExams = createAsyncThunk(
   "getDashboardExams/GET",
-  async () => {
-    const response = await getDashboardExamsService();
+  async (props: { start_date?: string; end_date?: string }) => {
+    const response = await getDashboardExamsService(props);
     return response;
   }
 );

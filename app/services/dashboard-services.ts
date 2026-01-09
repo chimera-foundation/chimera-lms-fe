@@ -98,20 +98,31 @@ export const getDashboardService = async (): Promise<DashboardItem> => {
   return data;
 };
 
-export const getDashboardAssignmentsService =
-  async (): Promise<Assignments> => {
-    const response = await fetch(`/api/dashboard/assignments`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        accept: "application/json",
-      },
-    });
+export const getDashboardAssignmentsService = async (props: {
+  start_date?: string;
+  end_date?: string;
+}): Promise<Assignments> => {
+  const { start_date, end_date } = props;
 
-    const data = await response.json();
-
-    return data;
+  let params = {
+    ...(start_date && { start_date: start_date }),
+    ...(end_date && { end_date: end_date }),
   };
+
+  const stringParams = new URLSearchParams(params as any).toString();
+
+  const response = await fetch(`/api/dashboard/assignments?${stringParams}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+  });
+
+  const data = await response.json();
+
+  return data;
+};
 
 export const getDashboardAnnouncementsService = async (): Promise<
   DashboardAnnouncementItem[]
@@ -129,8 +140,20 @@ export const getDashboardAnnouncementsService = async (): Promise<
   return data;
 };
 
-export const getDashboardExamsService = async (): Promise<Exams> => {
-  const response = await fetch(`/api/dashboard/exams`, {
+export const getDashboardExamsService = async (props: {
+  start_date?: string;
+  end_date?: string;
+}): Promise<Exams> => {
+  const { start_date, end_date } = props;
+
+  let params = {
+    ...(start_date && { start_date: start_date }),
+    ...(end_date && { end_date: end_date }),
+  };
+
+  const stringParams = new URLSearchParams(params as any).toString();
+
+  const response = await fetch(`/api/dashboard/exams?${stringParams}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

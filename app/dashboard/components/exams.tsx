@@ -1,7 +1,8 @@
 import ChevronDownIcon from "@/app/components/icons/chevron-down-icon";
 import ChevronUpIcon from "@/app/components/icons/chevron-up-icon";
-import { useAppSelector } from "@/app/redux/hooks";
-import { useState } from "react";
+import { getDashboardExams } from "@/app/redux/dashboard/dashboard-slice";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { useEffect, useState } from "react";
 
 const statusConfig = {
   pending: {
@@ -27,8 +28,35 @@ const statusConfig = {
 };
 
 export default function Exams() {
-  const { exam, loading } = useAppSelector((x) => x.dashboard);
+  const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false);
+  const { exam } = useAppSelector((x) => x.dashboard);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const getMonthDateRange = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const startDate = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+    const endDate = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
+
+    return {
+      start_date: startDate.toISOString().split("T")[0],
+      end_date: endDate.toISOString().split("T")[0],
+    };
+  };
+
+  useEffect(() => {
+    const { start_date, end_date } = getMonthDateRange(currentMonth);
+
+    setLoading(true);
+    dispatch(
+      getDashboardExams({
+        start_date,
+        end_date,
+      })
+    ).finally(() => setLoading(false));
+  }, [currentMonth]);
 
   const getStatusCount = (status: string) => {
     return (
