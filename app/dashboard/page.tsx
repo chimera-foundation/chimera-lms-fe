@@ -1,24 +1,20 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { logout } from "../redux/auth/auth-slice";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import Announcements from "./components/announcements";
-import { Calendar } from "./components/calendar";
-import EventsSection from "./components/events";
 import { useEffect } from "react";
-import { getAllEvents } from "../redux/event/event-slice";
-import { getAllAnnouncements } from "../redux/announcement/announcement-slice";
 import {
   getDashboard,
   getDashboardAnnouncements,
   getDashboardAssignments,
-  getDashboardDailySchedule,
   getDashboardExams,
   getDashboardUpcomingDeadlines,
 } from "../redux/dashboard/dashboard-slice";
-import ScheduleSection from "./components/schedule";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import Announcements from "./components/announcements";
 import Assignments from "./components/assignments";
+import { Calendar } from "./components/calendar";
+import EventsSection from "./components/events";
 import Exams from "./components/exams";
+import ScheduleSection from "./components/schedule";
+import { getAllSchedules } from "../redux/schedule/schedule-slice";
 
 export default function DashboardPage() {
   const { username } = useAppSelector((x) => x.user);
@@ -32,6 +28,11 @@ export default function DashboardPage() {
     dispatch(getDashboardAnnouncements());
     dispatch(getDashboardExams());
     dispatch(getDashboardUpcomingDeadlines());
+    dispatch(
+      getAllSchedules({
+        itemize: true,
+      })
+    );
   }, []);
 
   return (

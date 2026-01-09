@@ -7,10 +7,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid grid-cols-[16rem_1fr] min-h-screen gap- bg-slate-50">
+    <div className="grid grid-cols-[16rem_1fr] h-screen bg-slate-50">
       <Sidebar />
       <TokenMonitor />
-      <main>{children}</main>
+      <main className="overflow-auto">{children}</main>
     </div>
   );
 }

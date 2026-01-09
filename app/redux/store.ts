@@ -3,6 +3,7 @@ import userReducer from "./auth/auth-slice";
 import announcementReducer from "./announcement/announcement-slice";
 import eventReducer from "./event/event-slice";
 import dashboardReducer from "./dashboard/dashboard-slice";
+import scheduleReducer from "./schedule/schedule-slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -20,6 +21,7 @@ export const store = configureStore({
     announcement: announcementReducer,
     event: eventReducer,
     dashboard: dashboardReducer,
+    schedule: scheduleReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
