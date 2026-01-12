@@ -44,7 +44,7 @@ export function Calendar() {
 
   useEffect(() => {
     const formattedDate = formatDateToYYYYMMDD(currentDate);
-    const formattedMonth = formatMonthToYYYYMM(currentDate);
+    // const formattedMonth = formatMonthToYYYYMM(currentDate);
     const { start_date, end_date } = getMonthDateRange(currentDate);
 
     dispatch(
@@ -55,7 +55,8 @@ export function Calendar() {
 
     dispatch(
       getDashboardMonthlyEvents({
-        date: formattedMonth,
+        start_date,
+        end_date,
       })
     );
 
@@ -68,11 +69,12 @@ export function Calendar() {
   }, []);
 
   useEffect(() => {
-    const formattedMonth = formatMonthToYYYYMM(currentDate);
+    // const formattedMonth = formatMonthToYYYYMM(currentDate);
     const { start_date, end_date } = getMonthDateRange(currentDate);
     dispatch(
       getDashboardMonthlyEvents({
-        date: formattedMonth,
+        start_date,
+        end_date,
       })
     );
 

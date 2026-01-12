@@ -201,17 +201,21 @@ export const getDashboardDailyScheduleService = async (props: {
 };
 
 export const getDashboardMonthlyEventsService = async (props: {
-  date: string;
+  start_date: string;
+  end_date: string;
 }): Promise<MonthlyEventsResponse> => {
-  const { date } = props;
+  const { start_date, end_date } = props;
 
-  const response = await fetch(`/api/dashboard/schedule/monthly?date=${date}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      accept: "application/json",
-    },
-  });
+  const response = await fetch(
+    `/api/dashboard/schedule/monthly?start_date=${start_date}&end_date=${end_date}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
+    }
+  );
 
   const data = await response.json();
 

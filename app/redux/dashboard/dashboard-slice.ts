@@ -90,7 +90,7 @@ export const getDashboardDailySchedule = createAsyncThunk(
 
 export const getDashboardMonthlyEvents = createAsyncThunk(
   "getDashboardMonthlyEvents/GET",
-  async (props: { date: string }) => {
+  async (props: { start_date: string; end_date: string }) => {
     const response = await getDashboardMonthlyEventsService(props);
     return response;
   }

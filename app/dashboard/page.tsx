@@ -18,8 +18,6 @@ import { getAllSchedules } from "../redux/schedule/schedule-slice";
 
 export default function DashboardPage() {
   const { username } = useAppSelector((x) => x.user);
-  const { dashboard, assignments, announcements, exam, upcoming_deadlines } =
-    useAppSelector((x) => x.dashboard);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
