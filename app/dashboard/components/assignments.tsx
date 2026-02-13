@@ -1,8 +1,8 @@
 import ChevronDownIcon from "@/app/components/icons/chevron-down-icon";
 import ChevronUpIcon from "@/app/components/icons/chevron-up-icon";
-import { getDashboardAssignments } from "@/app/redux/dashboard/dashboard-slice";
+import { getAllAssessmentsAssignment } from "@/app/redux/assessments/assessment-slice";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 const statusConfig = {
   pending: {
@@ -30,7 +30,7 @@ const statusConfig = {
 export default function Assignments() {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const { assignments } = useAppSelector((x) => x.dashboard);
+  const { assessmentAssignment } = useAppSelector((x) => x.assessment);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const getMonthDateRange = (date: Date) => {
@@ -41,8 +41,8 @@ export default function Assignments() {
     const endDate = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
 
     return {
-      start_date: startDate.toISOString().split("T")[0],
-      end_date: endDate.toISOString().split("T")[0],
+      start_date: startDate.toISOString(),
+      end_date: endDate.toISOString(),
     };
   };
 
@@ -50,21 +50,23 @@ export default function Assignments() {
     const { start_date, end_date } = getMonthDateRange(currentMonth);
     setLoading(true);
     dispatch(
-      getDashboardAssignments({
+      getAllAssessmentsAssignment({
         start_date,
         end_date,
-      })
+        type: "assignment",
+      }),
     ).finally(() => setLoading(false));
   }, [currentMonth]);
 
   const getStatusCount = (status: string) => {
     return (
-      assignments?.status_counts?.find((s) => s.status.toLowerCase() === status)
-        ?.count || 0
+      assessmentAssignment?.summary?.[
+        status as keyof typeof assessmentAssignment.summary
+      ] || 0
     );
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | Date) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -112,7 +114,7 @@ export default function Assignments() {
               className="text-gray-400 hover:text-gray-600"
               onClick={() =>
                 setCurrentMonth(
-                  new Date(currentMonth.setMonth(currentMonth.getMonth() + 1))
+                  new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)),
                 )
               }
             >
@@ -122,7 +124,7 @@ export default function Assignments() {
               className="text-gray-400 hover:text-gray-600"
               onClick={() =>
                 setCurrentMonth(
-                  new Date(currentMonth.setMonth(currentMonth.getMonth() - 1))
+                  new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)),
                 )
               }
             >
@@ -147,7 +149,7 @@ export default function Assignments() {
                 <span className="text-2xl font-bold">{count}</span>
               </div>
             );
-          }
+          },
         )}
       </div>
 
@@ -182,22 +184,30 @@ export default function Assignments() {
                   Loading...
                 </td>
               </tr>
-            ) : assignments?.items && assignments.items.length > 0 ? (
-              assignments.items.map((assignment) => {
+            ) : assessmentAssignment &&
+              assessmentAssignment.assessments.length > 0 ? (
+              assessmentAssignment.assessments.map((exam) => {
                 const statusKey =
-                  assignment.status.toLowerCase() as keyof typeof statusConfig;
+                  exam.status.toLowerCase() as keyof typeof statusConfig;
                 const config = statusConfig[statusKey] || statusConfig.pending;
 
                 return (
-                  <tr key={assignment.id} className="border-b border-gray-100">
+                  <tr key={exam.id} className="border-b border-gray-100">
                     <td className="py-3 px-3 text-sm text-gray-900">
-                      {assignment.subject}
+                      {exam.subject}
                     </td>
                     <td className="py-3 px-3 text-sm text-gray-900">
-                      {assignment.title}
+                      {exam.title}
                     </td>
                     <td className="py-3 px-3">
-                      {getAttachmentIcon(assignment.attachment_type)}
+                      <a
+                        href={exam.attachment_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:opacity-70"
+                      >
+                        {getAttachmentIcon("pdf")}
+                      </a>
                     </td>
                     <td className="py-3 px-3">
                       <span
@@ -207,7 +217,7 @@ export default function Assignments() {
                       </span>
                     </td>
                     <td className="py-3 px-3 text-sm text-gray-500">
-                      {formatDate(assignment.due_date)}
+                      {formatDate(exam.due_date)}
                     </td>
                   </tr>
                 );
@@ -218,7 +228,7 @@ export default function Assignments() {
                   colSpan={5}
                   className="text-center py-6 text-sm text-gray-500"
                 >
-                  No assignments found
+                  No exam found
                 </td>
               </tr>
             )}

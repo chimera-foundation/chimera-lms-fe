@@ -47,43 +47,43 @@ export function Calendar() {
     // const formattedMonth = formatMonthToYYYYMM(currentDate);
     const { start_date, end_date } = getMonthDateRange(currentDate);
 
-    dispatch(
-      getDashboardDailySchedule({
-        date: formattedDate,
-      })
-    );
+    // dispatch(
+    //   getDashboardDailySchedule({
+    //     date: formattedDate,
+    //   })
+    // );
 
-    dispatch(
-      getDashboardMonthlyEvents({
-        start_date,
-        end_date,
-      })
-    );
+    // dispatch(
+    //   getDashboardMonthlyEvents({
+    //     start_date,
+    //     end_date,
+    //   })
+    // );
 
-    dispatch(
-      getAllEvents({
-        start_date,
-        end_date,
-      })
-    );
+    // dispatch(
+    //   getAllEvents({
+    //     start_date,
+    //     end_date,
+    //   })
+    // );
   }, []);
 
   useEffect(() => {
     // const formattedMonth = formatMonthToYYYYMM(currentDate);
     const { start_date, end_date } = getMonthDateRange(currentDate);
-    dispatch(
-      getDashboardMonthlyEvents({
-        start_date,
-        end_date,
-      })
-    );
+    // dispatch(
+    //   getDashboardMonthlyEvents({
+    //     start_date,
+    //     end_date,
+    //   }),
+    // );
 
-    dispatch(
-      getAllEvents({
-        start_date,
-        end_date,
-      })
-    );
+    // dispatch(
+    //   getAllEvents({
+    //     start_date,
+    //     end_date,
+    //   }),
+    // );
   }, [currentDate, dispatch]);
 
   const monthNames = [
@@ -134,7 +134,11 @@ export function Calendar() {
 
   const changeMonth = (increment: any) => {
     setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + increment, 1)
+      new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + increment,
+        1,
+      ),
     );
   };
 
@@ -143,23 +147,23 @@ export function Calendar() {
       const newDate = new Date(
         currentDate.getFullYear(),
         currentDate.getMonth(),
-        day
+        day,
       );
       setSelectedDate(newDate);
 
       const formattedDate = formatDateToYYYYMMDD(newDate);
 
-      dispatch(
-        getDashboardDailySchedule({
-          date: formattedDate,
-        })
-      );
+      // dispatch(
+      //   getDashboardDailySchedule({
+      //     date: formattedDate,
+      //   }),
+      // );
     }
   };
 
   const hasEvent = (day: number) => {
     const dateString = formatDateToYYYYMMDD(
-      new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+      new Date(currentDate.getFullYear(), currentDate.getMonth(), day),
     );
     return monthlyEvents?.includes(dateString);
   };

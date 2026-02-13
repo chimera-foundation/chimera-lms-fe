@@ -20,15 +20,15 @@ export async function POST(request: Request) {
     });
 
     const data = await response.json();
-
+    console.log(data);
     if (!response.ok) {
       return NextResponse.json(
         { error: data.message || "Login failed" },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
-    (await cookies()).set("access_token", data.access_token, {
+    (await cookies()).set("access_token", data.data.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       {
         httpOnly: false,
         path: "/",
-      }
+      },
     );
 
     return NextResponse.json(
@@ -50,13 +50,13 @@ export async function POST(request: Request) {
         username: data.username,
         token_type: data.token_type,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

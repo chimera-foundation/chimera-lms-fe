@@ -3,8 +3,6 @@ import { useEffect } from "react";
 import {
   getDashboard,
   getDashboardAnnouncements,
-  getDashboardAssignments,
-  getDashboardExams,
   getDashboardUpcomingDeadlines,
 } from "../redux/dashboard/dashboard-slice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -14,21 +12,20 @@ import { Calendar } from "./components/calendar";
 import EventsSection from "./components/events";
 import Exams from "./components/exams";
 import ScheduleSection from "./components/schedule";
-import { getAllSchedules } from "../redux/schedule/schedule-slice";
 
 export default function DashboardPage() {
   const { username } = useAppSelector((x) => x.user);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getDashboard());
-    dispatch(getDashboardAnnouncements());
-    dispatch(getDashboardUpcomingDeadlines());
-    dispatch(
-      getAllSchedules({
-        itemize: true,
-      })
-    );
+    // dispatch(getDashboard());
+    // dispatch(getDashboardAnnouncements());
+    // dispatch(getDashboardUpcomingDeadlines());
+    // dispatch(
+    //   getAllSchedules({
+    //     itemize: true,
+    //   }),
+    // );
   }, []);
 
   return (
