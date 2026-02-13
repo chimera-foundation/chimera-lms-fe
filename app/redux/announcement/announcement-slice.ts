@@ -7,28 +7,22 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 interface AnnouncementState {
   announcement: AnnouncementItem[];
-  total: number;
-  page: number;
-  per_page: number;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AnnouncementState = {
   announcement: [],
-  total: 0,
-  page: 0,
-  per_page: 0,
   loading: false,
   error: null,
 };
 
 export const getAllAnnouncements = createAsyncThunk(
   "getAllAnnouncements/GET",
-  async (props: { token: string }) => {
+  async (props: { start_date?: string; end_date?: string }) => {
     const response = await getAllAnnouncementsService(props);
     return response;
-  }
+  },
 );
 
 const announcementSlice = createSlice({
@@ -49,11 +43,8 @@ const announcementSlice = createSlice({
         getAllAnnouncements.fulfilled,
         (state, action: PayloadAction<GetAnnouncementsResponse>) => {
           state.loading = false;
-          state.announcement = action.payload.items;
-          state.total = action.payload.total;
-          state.page = action.payload.page;
-          state.per_page = action.payload.per_page;
-        }
+          state.announcement = action.payload.data;
+        },
       )
       .addCase(getAllAnnouncements.rejected, (state, action) => {
         state.loading = false;

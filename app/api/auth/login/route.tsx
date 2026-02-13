@@ -23,8 +23,8 @@ export async function POST(request: Request) {
     console.log(data);
     if (!response.ok) {
       return NextResponse.json(
-        { error: data.message || "Login failed" },
-        { status: response.status },
+        { error: data.errors || "Login failed" },
+        { status: data.status },
       );
     }
 

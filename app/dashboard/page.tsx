@@ -12,6 +12,7 @@ import { Calendar } from "./components/calendar";
 import EventsSection from "./components/events";
 import Exams from "./components/exams";
 import ScheduleSection from "./components/schedule";
+import { getAllAnnouncements } from "../redux/announcement/announcement-slice";
 
 export default function DashboardPage() {
   const { username } = useAppSelector((x) => x.user);
@@ -26,6 +27,7 @@ export default function DashboardPage() {
     //     itemize: true,
     //   }),
     // );
+    dispatch(getAllAnnouncements({}));
   }, []);
 
   return (

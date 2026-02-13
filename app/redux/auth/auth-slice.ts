@@ -24,7 +24,7 @@ export const loginUser = createAsyncThunk(
   async (props: { email: string; password: string }) => {
     const response = await loginUserService(props);
     return response;
-  }
+  },
 );
 
 export const logoutUser = createAsyncThunk("logoutUser/POST", async () => {
@@ -40,7 +40,7 @@ export const hydrateSession = createAsyncThunk(
     } catch {
       return rejectWithValue("Session expired");
     }
-  }
+  },
 );
 
 const userSlice = createSlice({
