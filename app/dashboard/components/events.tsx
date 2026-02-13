@@ -2,7 +2,7 @@ import ClockIcon from "@/app/components/icons/clock-icon";
 import RoomIcon from "@/app/components/icons/room-icon";
 import { useAppSelector } from "@/app/redux/hooks";
 
-import { ISOtoDay, ISOtoTime, ISOtoWeekday } from "@/helper";
+import { capitalize, ISOtoDay, ISOtoTime, ISOtoWeekday } from "@/helper";
 
 export default function EventsSection({ title }: { title: string }) {
   const { events } = useAppSelector((x) => x.event);
@@ -13,33 +13,34 @@ export default function EventsSection({ title }: { title: string }) {
         {events?.length > 0 ? (
           events.map((ev, index) => (
             <div
-              key={ev.id}
+              key={ev.ID}
               className={`bg-[#F5F5F5] flex items-center gap-4 p-3 rounded-lg `}
             >
               <div className="p-1 flex flex-col items-center min-w-12.5 bg-white rounded-md">
                 <p className="text-2xl font-bold text-gray-800">
-                  {ISOtoDay(ev.start_time)}
+                  {ISOtoDay(ev.StartAt.toString())}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {ISOtoWeekday(ev.start_time)}
+                  {ISOtoWeekday(ev.EndAt.toString())}
                 </p>
               </div>
 
               <div className="flex-1">
                 <p className="text-xs font-semibold text-gray-600 mb-1">
-                  {ev.event_type}
+                  {capitalize(ev.EventType)}
                 </p>
-                <p className="font-semibold text-gray-900 mb-2">{ev.title}</p>
+                <p className="font-semibold text-gray-900 mb-2">{ev.Title}</p>
                 <div className="flex items-center gap-4 text-xs text-gray-600">
                   <div className="flex items-center gap-1">
                     <ClockIcon />
                     <span>
-                      {ISOtoTime(ev.start_time)} - {ISOtoTime(ev.end_time)}
+                      {ISOtoTime(ev.StartAt.toString())} -{" "}
+                      {ISOtoTime(ev.EndAt.toString())}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <RoomIcon />
-                    <span>{ev.location}</span>
+                    <span>{ev.Location}</span>
                   </div>
                 </div>
               </div>

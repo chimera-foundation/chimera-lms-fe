@@ -8,20 +8,12 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 interface EventState {
   events: EventItem[];
-  holidays: HolidayItem[] | [] | null;
-  total: number;
-  page: number;
-  per_page: number;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: EventState = {
   events: [],
-  holidays: null,
-  total: 0,
-  page: 0,
-  per_page: 0,
   loading: false,
   error: null,
 };
@@ -31,7 +23,7 @@ export const getAllEvents = createAsyncThunk(
   async (props: { start_date?: string; end_date?: string }) => {
     const response = await getAllEventsService(props);
     return response;
-  }
+  },
 );
 
 const eventSlice = createSlice({
@@ -52,12 +44,8 @@ const eventSlice = createSlice({
         getAllEvents.fulfilled,
         (state, action: PayloadAction<GetEventsResponse>) => {
           state.loading = false;
-          state.events = action.payload.items;
-          state.holidays = action.payload.holidays;
-          state.total = action.payload.total;
-          state.page = action.payload.page;
-          state.per_page = action.payload.per_page;
-        }
+          state.events = action.payload.data;
+        },
       )
       .addCase(getAllEvents.rejected, (state, action) => {
         state.loading = false;

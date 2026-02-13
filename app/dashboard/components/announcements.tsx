@@ -32,7 +32,7 @@ const formatDate = (dateString: string) => {
 };
 
 export default function Announcements() {
-  const { announcements } = useAppSelector((x) => x.dashboard);
+  const { announcement } = useAppSelector((x) => x.announcement);
 
   return (
     <div className="w-full">
@@ -40,15 +40,16 @@ export default function Announcements() {
       <div
         className={`flex gap-6 overflow-x-auto max-h-96 lg:w-full w-[680px] no-scrollbar`}
       >
-        {announcements.length > 0 ? (
-          announcements.map((announcement) => (
+        {announcement ? (
+          announcement.map((ann) => (
             <div
-              key={announcement.id}
+              key={ann.ID}
               className="bg-white rounded-2xl border border-gray-100 overflow-hidden w-80 h-96 shrink-0"
             >
               <div className="w-full h-36 flex items-center justify-center relative">
                 <Image
-                  src={announcement.image_url}
+                  unoptimized
+                  src={ann.ImageURL}
                   alt="Chimera Logo"
                   fill={true}
                   className="object-cover"
@@ -57,13 +58,13 @@ export default function Announcements() {
 
               <div className="p-5">
                 <h3 className="font-semibold text-gray-900 mb-2">
-                  {announcement.title}
+                  {ann.Title}
                 </h3>
                 <p className="text-sm text-gray-500 mb-3">
-                  {formatDate(announcement.published_at)}
+                  {formatDate(ann.StartAt.toString())}
                 </p>
                 <p className="text-xs text-gray-600 leading-relaxed line-clamp-6">
-                  {announcement.content}
+                  {ann.Description}
                 </p>
               </div>
             </div>

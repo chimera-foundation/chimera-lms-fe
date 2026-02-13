@@ -11,17 +11,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
   const searchParams = request.nextUrl.searchParams;
-  const start_date = searchParams.get("start_date");
-  const end_date = searchParams.get("end_date");
+  const start = searchParams.get("start");
+  const end = searchParams.get("end");
 
   let params = {
-    ...(start_date && { start_date }),
-    ...(end_date && { end_date }),
+    ...(start && { start }),
+    ...(end && { end }),
   };
 
   const query = new URLSearchParams(params).toString();
 
   let url = `${API_URL}/events?${query}`;
+  // let url = `${API_URL}/events?start=2026-01-01T00:00:00Z&end=2026-01-31T23:59:59Z`;
   console.log("GET: All Events", url);
 
   const response = await fetch(url, {

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   getDashboard,
   getDashboardAnnouncements,
@@ -13,12 +13,29 @@ import EventsSection from "./components/events";
 import Exams from "./components/exams";
 import ScheduleSection from "./components/schedule";
 import { getAllAnnouncements } from "../redux/announcement/announcement-slice";
+import { getAllEvents } from "../redux/event/event-slice";
 
 export default function DashboardPage() {
   const { username } = useAppSelector((x) => x.user);
   const dispatch = useAppDispatch();
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const getMonthDateRange = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const startDate = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+    const endDate = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
+
+    return {
+      start_date: startDate.toISOString(),
+      end_date: endDate.toISOString(),
+    };
+  };
 
   useEffect(() => {
+    const { start_date, end_date } = getMonthDateRange(currentMonth);
+
     // dispatch(getDashboard());
     // dispatch(getDashboardAnnouncements());
     // dispatch(getDashboardUpcomingDeadlines());
@@ -27,7 +44,8 @@ export default function DashboardPage() {
     //     itemize: true,
     //   }),
     // );
-    dispatch(getAllAnnouncements({}));
+    dispatch(getAllAnnouncements({ start_date, end_date }));
+    dispatch(getAllEvents({ start_date, end_date }));
   }, []);
 
   return (

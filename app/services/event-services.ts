@@ -1,14 +1,28 @@
 export interface EventItem {
-  id: string;
-  title: string;
-  description: string;
-  event_type: string;
-  location: string;
-  start_time: string;
-  end_time: string;
-  meeting_link: string;
-  recurrence_rule: string;
-  is_active: boolean;
+  ID: string;
+  CreatedAt: Date;
+  CreatedBy: Date;
+  UpdatedAt: Date;
+  UpdatedBy: Date;
+  DeletedAt: Date;
+  DeletedBy: Date;
+  OrganizationID: string;
+  Title: string;
+  Description: string;
+  Location: string;
+  EventType: string;
+  Color: string;
+  StartAt: Date;
+  EndAt: Date;
+  IsAllDay: boolean;
+  RecurrenceRule: string;
+  Scope: string;
+  CohortID: string;
+  SectionID: string;
+  UserID: string;
+  SourceID: string;
+  SourceType: string;
+  ImageURL: string;
 }
 
 export interface HolidayItem {
@@ -17,27 +31,28 @@ export interface HolidayItem {
 }
 
 export interface GetEventsResponse {
-  total: number;
-  page: number;
-  per_page: number;
-  items: EventItem[];
-  holidays: HolidayItem[];
+  code: number;
+  status: string;
+  data: EventItem[];
 }
 
 export const getAllEventsService = async (props: {
   start_date?: string;
   end_date?: string;
 }): Promise<GetEventsResponse> => {
-  const { start_date, end_date } = props;
+  const params = new URLSearchParams();
 
-  let params = {
-    ...(start_date && { start_date: start_date }),
-    ...(end_date && { end_date: end_date }),
-  };
+  if (props?.start_date) {
+    params.append("start", props.start_date);
+  }
+  if (props?.end_date) {
+    params.append("end", props.end_date);
+  }
 
-  const stringParams = new URLSearchParams(params as any).toString();
+  const queryString = params.toString();
+  const url = `/api/events${queryString ? `?${queryString}` : ""}`;
 
-  const response = await fetch(`/api/events?` + stringParams, {
+  const response = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

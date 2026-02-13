@@ -12,16 +12,18 @@ export async function GET(request: NextRequest) {
   }
 
   const searchParams = request.nextUrl.searchParams;
-  const start_date = searchParams.get("start_date");
-  const end_date = searchParams.get("end_date");
+  const start = searchParams.get("start");
+  const end = searchParams.get("end");
 
   let params = {
-    ...(start_date && { start_date }),
-    ...(end_date && { end_date }),
+    ...(start && { start }),
+    ...(end && { end }),
   };
 
   const query = new URLSearchParams(params).toString();
 
+  // GANTI INI NANTI COY
+  // let url = `${API_URL}/events/announcements?start=2026-01-01T00:00:00Z&end=2026-01-31T23:59:59Z`;
   let url = `${API_URL}/events/announcements${query ? `?${query}` : ""}`;
   console.log("GET: All Announcements", url);
 
