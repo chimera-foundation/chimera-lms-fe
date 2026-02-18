@@ -5,6 +5,7 @@ import eventReducer from "./event/event-slice";
 import dashboardReducer from "./dashboard/dashboard-slice";
 import scheduleReducer from "./schedule/schedule-slice";
 import assessmentReducer from "./assessments/assessment-slice";
+import calendarReducer from "./calendar/calendar-slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -24,6 +25,7 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     schedule: scheduleReducer,
     assessment: assessmentReducer,
+    calendar: calendarReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

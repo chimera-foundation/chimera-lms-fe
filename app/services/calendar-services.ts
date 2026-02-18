@@ -1,6 +1,6 @@
 import { GetEventsResponse } from "../models/event";
 
-export const getAllEventsService = async (props: {
+export const getCalendarService = async (props: {
   start_date?: string;
   end_date?: string;
 }): Promise<GetEventsResponse> => {
@@ -14,7 +14,7 @@ export const getAllEventsService = async (props: {
   }
 
   const queryString = params.toString();
-  const url = `/api/events${queryString ? `?${queryString}` : ""}`;
+  const url = `/api/calendar${queryString ? `?${queryString}` : ""}`;
 
   const response = await fetch(url, {
     method: "GET",

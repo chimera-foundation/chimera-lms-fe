@@ -1,40 +1,9 @@
-export interface AnnouncementItem {
-  ID: string;
-  CreatedAt: Date;
-  CreatedBy: Date;
-  UpdatedAt: Date;
-  UpdatedBy: Date;
-  DeletedAt: Date;
-  DeletedBy: Date;
-  OrganizationID: string;
-  Title: string;
-  Description: string;
-  Location: string;
-  EventType: string;
-  Color: string;
-  StartAt: Date;
-  EndAt: Date;
-  IsAllDay: boolean;
-  RecurrenceRule: string;
-  Scope: string;
-  CohortID: string;
-  SectionID: string;
-  UserID: string;
-  SourceID: string;
-  SourceType: string;
-  ImageURL: string;
-}
-
-export interface GetAnnouncementsResponse {
-  code: number;
-  status: string;
-  data: AnnouncementItem[];
-}
+import { EventItem, GetEventsResponse } from "../models/event";
 
 export const getAllAnnouncementsService = async (props: {
   start_date?: string;
   end_date?: string;
-}): Promise<GetAnnouncementsResponse> => {
+}): Promise<GetEventsResponse> => {
   const params = new URLSearchParams();
 
   if (props?.start_date) {

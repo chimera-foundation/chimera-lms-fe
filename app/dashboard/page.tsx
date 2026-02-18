@@ -14,6 +14,7 @@ import Exams from "./components/exams";
 import ScheduleSection from "./components/schedule";
 import { getAllAnnouncements } from "../redux/announcement/announcement-slice";
 import { getAllEvents } from "../redux/event/event-slice";
+import { getCalendar } from "../redux/calendar/calendar-slice";
 
 export default function DashboardPage() {
   const { username } = useAppSelector((x) => x.user);

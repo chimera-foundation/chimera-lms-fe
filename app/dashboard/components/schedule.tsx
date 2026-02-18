@@ -4,43 +4,54 @@ import { useAppSelector } from "@/app/redux/hooks";
 import { ISOtoTime } from "@/helper";
 
 export default function ScheduleSection() {
-  const { daily_schedule, loadingDailySchedule } = useAppSelector(
-    (x) => x.dashboard
-  );
+  const { calendar, selectedDate, loading } = useAppSelector((x) => x.calendar);
+
+  const dailySchedule =
+    calendar?.filter((event) => {
+      if (!selectedDate) return false;
+
+      const selected = new Date(selectedDate);
+      const selectedStart = new Date(selected.setHours(0, 0, 0, 0));
+      const selectedEnd = new Date(selected.setHours(23, 59, 59, 999));
+
+      const eventStart = new Date(event.StartAt);
+      const eventEnd = new Date(event.EndAt);
+
+      return (
+        (eventStart >= selectedStart && eventStart <= selectedEnd) ||
+        (eventEnd >= selectedStart && eventEnd <= selectedEnd) ||
+        (eventStart <= selectedStart && eventEnd >= selectedEnd)
+      );
+    }) || [];
 
   return (
     <div className="h-full flex flex-col">
       <h3 className="text-lg font-semibold mb-4">Schedule</h3>
       <div className="flex-1 overflow-y-auto flex flex-col gap-3 no-scrollbar">
-        {daily_schedule?.length > 0 ? (
-          daily_schedule.map((sched, index) => (
+        {dailySchedule?.length > 0 ? (
+          dailySchedule.map((sched, index) => (
             <div
-              key={sched.id}
+              key={sched.ID}
               className={`bg-[#F5F5F5] flex items-center gap-4 p-3 rounded-lg `}
             >
-              {/* <div className="p-1 flex flex-col items-center min-w-12.5 bg-white rounded-md">
-              <p className="text-2xl font-bold text-gray-800">{sched.date}</p>
-              <p className="text-xs text-gray-500">{sched.day}</p>
-            </div> */}
-
               <div className="flex-1">
                 <button className="text-xs font-semibold text-black bg-white mb-1 py-1 px-2 rounded-md">
-                  {sched.type}
+                  {sched.EventType}
                 </button>
                 <p className="font-semibold text-gray-900 mb-2">
-                  {sched.title}
+                  {sched.Title}
                 </p>
                 <div className="flex items-center gap-4 text-xs text-gray-600">
                   <div className="flex items-center gap-1">
                     <ClockIcon />
                     <span>
-                      {ISOtoTime(sched.start_time)} -{" "}
-                      {ISOtoTime(sched.end_time)}
+                      {ISOtoTime(sched.StartAt.toString())} -{" "}
+                      {ISOtoTime(sched.EndAt.toString())}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <RoomIcon />
-                    <span>{sched.location}</span>
+                    <span>{sched.Location}</span>
                   </div>
                 </div>
               </div>

@@ -4,86 +4,40 @@ import ChevronDownIcon from "@/app/components/icons/chevron-down-icon";
 import ChevronUpIcon from "@/app/components/icons/chevron-up-icon";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import {
-  getDashboardDailySchedule,
-  getDashboardMonthlyEvents,
-} from "@/app/redux/dashboard/dashboard-slice";
-import { getAllEvents } from "@/app/redux/event/event-slice";
+  getCalendar,
+  setSelectedDate,
+} from "@/app/redux/calendar/calendar-slice";
 
 export function Calendar() {
-  const { monthlyEvents } = useAppSelector((x) => x.dashboard);
+  const { calendar } = useAppSelector((x) => x.calendar);
   const dispatch = useAppDispatch();
   const [currentDate, setCurrentDate] = useState(() => new Date());
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
-
-  const formatDateToYYYYMMDD = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
-  const formatMonthToYYYYMM = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    return `${year}-${month}`;
-  };
+  const [localSelectedDate, setLocalSelectedDate] = useState(() => new Date());
 
   const getMonthDateRange = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
 
-    const firstDay = new Date(year, month, 1);
-
-    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+    const endDate = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
 
     return {
-      start_date: formatDateToYYYYMMDD(firstDay),
-      end_date: formatDateToYYYYMMDD(lastDay),
+      start_date: startDate.toISOString(),
+      end_date: endDate.toISOString(),
     };
   };
 
   useEffect(() => {
-    const formattedDate = formatDateToYYYYMMDD(currentDate);
-    // const formattedMonth = formatMonthToYYYYMM(currentDate);
     const { start_date, end_date } = getMonthDateRange(currentDate);
 
-    // dispatch(
-    //   getDashboardDailySchedule({
-    //     date: formattedDate,
-    //   })
-    // );
-
-    // dispatch(
-    //   getDashboardMonthlyEvents({
-    //     start_date,
-    //     end_date,
-    //   })
-    // );
-
-    // dispatch(
-    //   getAllEvents({
-    //     start_date,
-    //     end_date,
-    //   })
-    // );
+    dispatch(getCalendar({ start_date, end_date }));
+    dispatch(setSelectedDate(new Date().toISOString()));
   }, []);
 
   useEffect(() => {
-    // const formattedMonth = formatMonthToYYYYMM(currentDate);
     const { start_date, end_date } = getMonthDateRange(currentDate);
-    // dispatch(
-    //   getDashboardMonthlyEvents({
-    //     start_date,
-    //     end_date,
-    //   }),
-    // );
 
-    // dispatch(
-    //   getAllEvents({
-    //     start_date,
-    //     end_date,
-    //   }),
-    // );
+    dispatch(getCalendar({ start_date, end_date }));
   }, [currentDate, dispatch]);
 
   const monthNames = [
@@ -149,23 +103,31 @@ export function Calendar() {
         currentDate.getMonth(),
         day,
       );
-      setSelectedDate(newDate);
+      setLocalSelectedDate(newDate);
 
-      const formattedDate = formatDateToYYYYMMDD(newDate);
-
-      // dispatch(
-      //   getDashboardDailySchedule({
-      //     date: formattedDate,
-      //   }),
-      // );
+      dispatch(setSelectedDate(newDate.toISOString()));
     }
   };
 
   const hasEvent = (day: number) => {
-    const dateString = formatDateToYYYYMMDD(
-      new Date(currentDate.getFullYear(), currentDate.getMonth(), day),
+    const targetDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day,
     );
-    return monthlyEvents?.includes(dateString);
+    const targetDateStart = new Date(targetDate.setHours(0, 0, 0, 0));
+    const targetDateEnd = new Date(targetDate.setHours(23, 59, 59, 999));
+
+    return calendar?.some((event) => {
+      const eventStart = new Date(event.StartAt);
+      const eventEnd = new Date(event.EndAt);
+
+      return (
+        (eventStart >= targetDateStart && eventStart <= targetDateEnd) ||
+        (eventEnd >= targetDateStart && eventEnd <= targetDateEnd) ||
+        (eventStart <= targetDateStart && eventEnd >= targetDateEnd)
+      );
+    });
   };
 
   const days = generateCalendarDays();
@@ -212,9 +174,9 @@ export function Calendar() {
         {days.map((day, index) => {
           const isToday = isCurrentMonth && day === today.getDate();
           const isSelected =
-            day === selectedDate.getDate() &&
-            currentDate.getMonth() === selectedDate.getMonth() &&
-            currentDate.getFullYear() === selectedDate.getFullYear();
+            day === localSelectedDate.getDate() &&
+            currentDate.getMonth() === localSelectedDate.getMonth() &&
+            currentDate.getFullYear() === localSelectedDate.getFullYear();
           const eventMarker = day && hasEvent(day as number);
           return (
             <div

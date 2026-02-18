@@ -1,12 +1,9 @@
-import {
-  AnnouncementItem,
-  getAllAnnouncementsService,
-  GetAnnouncementsResponse,
-} from "@/app/services/announcement-services";
+import { EventItem, GetEventsResponse } from "@/app/models/event";
+import { getAllAnnouncementsService } from "@/app/services/announcement-services";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 interface AnnouncementState {
-  announcement: AnnouncementItem[];
+  announcement: EventItem[];
   loading: boolean;
   error: string | null;
 }
@@ -41,7 +38,7 @@ const announcementSlice = createSlice({
       })
       .addCase(
         getAllAnnouncements.fulfilled,
-        (state, action: PayloadAction<GetAnnouncementsResponse>) => {
+        (state, action: PayloadAction<GetEventsResponse>) => {
           state.loading = false;
           state.announcement = action.payload.data;
         },
