@@ -228,7 +228,7 @@ export default function Assignments() {
                   colSpan={5}
                   className="text-center py-6 text-sm text-gray-500"
                 >
-                  No exam found
+                  No Assignment found
                 </td>
               </tr>
             )}
