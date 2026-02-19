@@ -1,15 +1,4 @@
-import { ScheduleItem } from "@/app/redux/schedule/schedule-slice";
-
-export interface CalendarEvent {
-  id: string;
-  title: string;
-  date: Date;
-  startTime: string;
-  endTime: string;
-  type: string;
-  location?: string;
-  description?: string;
-}
+import { EventItem } from "@/app/models/event";
 
 const getLocalDateKey = (date: Date): string => {
   const year = date.getFullYear();
@@ -18,42 +7,18 @@ const getLocalDateKey = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-export const mapScheduleToCalendarEvent = (
-  schedule: ScheduleItem
-): CalendarEvent => {
-  const startDate = new Date(schedule.start_time);
-  const endDate = new Date(schedule.end_time);
-
-  return {
-    id: schedule.id,
-    title: schedule.title,
-    date: startDate,
-    startTime: startDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }),
-    endTime: endDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }),
-    type: schedule.schedule_type,
-    location: schedule.location,
-    description: schedule.description,
-  };
-};
-
 export const groupEventsByDate = (
-  schedules: ScheduleItem[]
-): Map<string, CalendarEvent[]> => {
-  const grouped = new Map<string, CalendarEvent[]>();
+  events: EventItem[],
+): Map<string, EventItem[]> => {
+  const grouped = new Map<string, EventItem[]>();
 
-  schedules.forEach((schedule) => {
-    if (!schedule.is_active) return;
+  if (!events || !Array.isArray(events)) {
+    return grouped;
+  }
 
-    const event = mapScheduleToCalendarEvent(schedule);
-    const dateKey = getLocalDateKey(event.date);
+  events.forEach((event) => {
+    const startDate = new Date(event.StartAt);
+    const dateKey = getLocalDateKey(startDate);
 
     if (!grouped.has(dateKey)) {
       grouped.set(dateKey, []);
@@ -77,7 +42,7 @@ export const getCalendarDays = (year: number, month: number): Date[] => {
   const days: Date[] = [];
   let currentDate = new Date(startDate);
 
-  for (let i = 0; i < 42; i++) {
+  for (let i = 0; i < 35; i++) {
     days.push(new Date(currentDate));
     currentDate.setDate(currentDate.getDate() + 1);
   }

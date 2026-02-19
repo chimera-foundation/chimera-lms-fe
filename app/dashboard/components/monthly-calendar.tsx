@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useMemo } from "react";
-import { ScheduleItem } from "@/app/redux/schedule/schedule-slice";
+import React, { useState, useMemo, useEffect } from "react";
+import { EventItem } from "@/app/models/event";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { getCalendar } from "@/app/redux/calendar/calendar-slice";
 import {
-  CalendarEvent,
   getCalendarDays,
   getDayName,
   getMonthName,
@@ -12,22 +13,41 @@ import {
 } from "@/app/utils/calendar-utils";
 
 interface MonthlyCalendarProps {
-  schedules: ScheduleItem[];
-  onEventClick: (event: CalendarEvent) => void;
+  events: EventItem[];
+  onEventClick: (events: EventItem[]) => void;
 }
 
 export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
-  schedules,
+  events,
   onEventClick,
 }) => {
+  const dispatch = useAppDispatch();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
 
   const eventsByDate = useMemo(() => {
-    return groupEventsByDate(schedules);
-  }, [schedules]);
+    return groupEventsByDate(events);
+  }, [events]);
+
+  const getMonthDateRange = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const startDate = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+    const endDate = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59));
+
+    return {
+      start_date: startDate.toISOString(),
+      end_date: endDate.toISOString(),
+    };
+  };
+
+  useEffect(() => {
+    const { start_date, end_date } = getMonthDateRange(currentDate);
+    dispatch(getCalendar({ start_date, end_date }));
+  }, [currentDate, dispatch]);
 
   const calendarDays = useMemo(() => {
     return getCalendarDays(currentYear, currentMonth);
@@ -35,13 +55,13 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
 
   const goToPreviousMonth = () => {
     setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
     );
   };
 
   const goToNextMonth = () => {
     setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
     );
   };
 
@@ -54,12 +74,22 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
 
     return dayEvents.map((event) => (
       <div
-        key={event.id}
+        key={event.ID}
         className="text-xs bg-gray-700 text-white px-2 py-1 rounded mb-1 cursor-pointer hover:bg-gray-600 truncate"
       >
-        <div className="font-medium truncate">{event.title}</div>
+        <div className="font-medium truncate">{event.Title}</div>
         <div className="text-[10px] opacity-80">
-          {event.startTime}-{event.endTime}
+          {new Date(event.StartAt).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })}
+          -
+          {new Date(event.EndAt).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })}
         </div>
       </div>
     ));
@@ -74,27 +104,12 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
 
     setSelectedDate(dateKey);
 
-    if (dayEvents.length > 0) {
-      onEventClick(dayEvents[0]);
-    } else {
-      const noEventPlaceholder: CalendarEvent = {
-        id: `no-event-${dateKey}`,
-        title: "No events scheduled",
-        date: date,
-        startTime: "",
-        endTime: "",
-        type: "event",
-        description: `No events scheduled for ${getMonthName(
-          date.getMonth()
-        )} ${date.getDate()}, ${date.getFullYear()}`,
-      };
-      onEventClick(noEventPlaceholder);
-    }
+    onEventClick(dayEvents);
   };
 
   return (
     <div className="bg-white rounded-lg shadow">
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold">
             {getMonthName(currentMonth)} {currentYear}
@@ -175,7 +190,7 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
       </div>
 
       <div className="p-4">
-        <div className="grid grid-cols-7 gap-2 mb-2">
+        {/* <div className="grid grid-cols-7 gap-2 mb-2">
           {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => (
             <div
               key={dayIndex}
@@ -184,7 +199,7 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
               {getDayName(dayIndex)}
             </div>
           ))}
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-7 gap-2">
           {calendarDays.map((date, index) => {
@@ -200,12 +215,12 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
               <div
                 key={index}
                 onClick={() => handleDateClick(date)}
-                className={`min-h-[100px] border rounded-lg p-2 cursor-pointer transition-all ${
+                className={`min-h-[120px] border rounded-lg p-2 cursor-pointer transition-all ${
                   isCurrentMonthDay
                     ? "bg-white border-gray-300 hover:bg-gray-50 hover:shadow-md"
                     : "bg-gray-50 border-gray-200 hover:bg-gray-100"
                 } ${isTodayDate ? "ring-2 ring-slate-500" : ""} ${
-                  isSelected ? "ring-2 ring-blue-500 bg-blue-50" : ""
+                  isSelected ? "ring-2 ring-black bg-blue-50" : ""
                 }`}
               >
                 <div

@@ -1,10 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import {
-  getAllSchedules,
-  ScheduleItem,
-} from "@/app/redux/schedule/schedule-slice";
+import { getCalendar } from "@/app/redux/calendar/calendar-slice";
+import { EventItem } from "@/app/models/event";
 import ChevronDownIcon from "@/app/components/icons/chevron-down-icon";
 import ChevronUpIcon from "@/app/components/icons/chevron-up-icon";
 import RoomIcon from "@/app/components/icons/room-icon";
@@ -12,9 +10,9 @@ import ClockIcon from "@/app/components/icons/clock-icon";
 
 export function WeeklySchedule() {
   const dispatch = useAppDispatch();
-  const { schedule, loading } = useAppSelector((x) => x.schedule);
+  const { calendar, loading } = useAppSelector((x) => x.calendar);
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
-    getMonday(new Date())
+    getMonday(new Date()),
   );
 
   function getMonday(date: Date): Date {
@@ -63,11 +61,11 @@ export function WeeklySchedule() {
 
     if (start.getMonth() === end.getMonth()) {
       return `${months[start.getMonth()]} ${startDay}${getOrdinalSuffix(
-        startDay
+        startDay,
       )} - ${endDay}${getOrdinalSuffix(endDay)}`;
     } else {
       return `${months[start.getMonth()]} ${startDay}${getOrdinalSuffix(
-        startDay
+        startDay,
       )} - ${months[end.getMonth()]} ${endDay}${getOrdinalSuffix(endDay)}`;
     }
   };
@@ -86,13 +84,28 @@ export function WeeklySchedule() {
     }
   };
 
-  useEffect(() => {
-    dispatch(
-      getAllSchedules({
-        itemize: true,
-      })
+  const getWeekDateRange = (startDate: Date) => {
+    const dates = getWeekDates();
+    const start = dates[0];
+    const end = dates[4];
+
+    const startUTC = new Date(
+      Date.UTC(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0),
     );
-  }, [dispatch]);
+    const endUTC = new Date(
+      Date.UTC(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59),
+    );
+
+    return {
+      start_date: startUTC.toISOString(),
+      end_date: endUTC.toISOString(),
+    };
+  };
+
+  useEffect(() => {
+    const { start_date, end_date } = getWeekDateRange(currentWeekStart);
+    dispatch(getCalendar({ start_date, end_date }));
+  }, [currentWeekStart, dispatch]);
 
   const changeWeek = (increment: number) => {
     const newDate = new Date(currentWeekStart);
@@ -100,14 +113,14 @@ export function WeeklySchedule() {
     setCurrentWeekStart(newDate);
   };
 
-  const getSchedulesForDate = (date: Date): ScheduleItem[] => {
+  const getSchedulesForDate = (date: Date): EventItem[] => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const localDateStr = `${year}-${month}-${day}`;
 
-    return schedule.filter((item) => {
-      const itemLocalDate = new Date(item.start_time);
+    return (calendar || []).filter((item) => {
+      const itemLocalDate = new Date(item.StartAt);
       const itemYear = itemLocalDate.getFullYear();
       const itemMonth = String(itemLocalDate.getMonth() + 1).padStart(2, "0");
       const itemDay = String(itemLocalDate.getDate()).padStart(2, "0");
@@ -183,26 +196,26 @@ export function WeeklySchedule() {
                 ) : (
                   daySchedules.map((item) => (
                     <div
-                      key={item.id}
+                      key={item.ID}
                       className="bg-[#F5F5F5] rounded-lg p-3 shadow-sm hover:opacity-75 transition-all"
                     >
                       <button className="text-xs font-bold mb-1 bg-white py-1 px-2 rounded-[5px]">
-                        {item.schedule_type}
+                        {item.EventType}
                       </button>
                       <div className="font-semibold text-sm text-gray-900 mb-2">
-                        {item.title}
+                        {item.Title}
                       </div>
                       <div className="flex items-center gap-1 text-xs text-gray-600 mb-1">
                         <ClockIcon />
                         <span>
-                          {formatTime(item.start_time)}-
-                          {formatTime(item.end_time)}
+                          {formatTime(item.StartAt.toString())}-
+                          {formatTime(item.EndAt.toString())}
                         </span>
                       </div>
-                      {item.location && (
+                      {item.Location && (
                         <div className="flex items-center gap-1 text-xs text-gray-600">
                           <RoomIcon />
-                          <span>{item.location}</span>
+                          <span>{item.Location}</span>
                         </div>
                       )}
                     </div>

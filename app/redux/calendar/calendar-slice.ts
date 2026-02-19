@@ -4,7 +4,7 @@ import { getAllEventsService } from "@/app/services/event-services";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 interface CalendarState {
-  calendar: EventItem[];
+  calendar: EventItem[] | [];
   selectedDate: string | null;
   loading: boolean;
   error: string | null;
