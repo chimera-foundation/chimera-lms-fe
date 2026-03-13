@@ -1,0 +1,29 @@
+import { API_URL } from "@/app/settings";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(request: NextRequest) {
+  const cookieStore = cookies();
+
+  const accessToken = (await cookieStore).get("access_token")?.value;
+
+  if (!accessToken) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  let url = `${API_URL}/grades/courses`;
+
+  console.log("GET: Grade Courses", url);
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  const data = await response.json();
+  return NextResponse.json(data, { status: response.status });
+}
