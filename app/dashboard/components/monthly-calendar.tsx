@@ -11,6 +11,7 @@ import {
   isCurrentMonth,
   isToday,
 } from "@/app/utils/calendar-utils";
+import ClickAwayListener from "react-click-away-listener";
 
 interface MonthlyCalendarProps {
   events: EventItem[];
@@ -24,12 +25,34 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
   const dispatch = useAppDispatch();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
+  const [filters, setFilters] = useState({
+    event: false,
+    meeting: false,
+  });
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
 
+  const filteredEvents = useMemo(() => {
+    const hasTypeFilter = filters.event || filters.meeting;
+
+    if (!hasTypeFilter) {
+      return events;
+    }
+
+    return events.filter((event) => {
+      const eventType = event.EventType?.toLowerCase();
+
+      return (
+        (filters.event && eventType === "vanilla") ||
+        (filters.meeting && eventType === "meeting")
+      );
+    });
+  }, [events, filters.event, filters.meeting]);
+
   const eventsByDate = useMemo(() => {
-    return groupEventsByDate(events);
-  }, [events]);
+    return groupEventsByDate(filteredEvents);
+  }, [filteredEvents]);
 
   const getMonthDateRange = (date: Date) => {
     const year = date.getFullYear();
@@ -64,6 +87,16 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
       new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
     );
   };
+
+  const toggleFilter = (key: keyof typeof filters) => {
+    setFilters((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    onEventClick(eventsByDate.get(selectedDate) || []);
+  }, [selectedDate, eventsByDate, onEventClick]);
 
   const renderDayEvents = (date: Date) => {
     const year = date.getFullYear();
@@ -154,22 +187,71 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
               </svg>
             </button>
           </div>
-          <button className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 flex items-center gap-1">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="relative">
+            <button
+              onClick={() => setShowFilterPopup((prev) => !prev)}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 flex items-center gap-1"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-              />
-            </svg>
-            Filter
-          </button>
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                />
+              </svg>
+              Filter
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d={showFilterPopup ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                />
+              </svg>
+            </button>
+            <ClickAwayListener onClickAway={() => setShowFilterPopup(false)}>
+              <div>
+                {showFilterPopup && (
+                  <div className="absolute right-0 mt-2 w-40 rounded-lg bg-gray-500 text-white shadow-xl z-20 p-2">
+                    <div className="space-y-1 text-sm">
+                      {[
+                        { key: "event", label: "Event" },
+                        { key: "meeting", label: "Meeting" },
+                      ].map((item) => (
+                        <label
+                          key={item.key}
+                          className="flex items-center gap-2 cursor-pointer rounded px-1 py-1 hover:bg-white/10"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={filters[item.key as keyof typeof filters]}
+                            onChange={() =>
+                              toggleFilter(item.key as keyof typeof filters)
+                            }
+                            className="h-4 w-4 rounded border-gray-200 bg-transparent text-gray-700 focus:ring-gray-300"
+                          />
+                          <span className="text-sm font-medium">
+                            {item.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ClickAwayListener>
+          </div>
           <button className="px-3 py-1.5 text-sm bg-gray-700 text-white rounded hover:bg-gray-600 flex items-center gap-1">
             <svg
               className="w-4 h-4"
@@ -215,7 +297,7 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
               <div
                 key={index}
                 onClick={() => handleDateClick(date)}
-                className={`min-h-[120px] border rounded-lg p-2 cursor-pointer transition-all ${
+                className={`min-h-30 border rounded-lg p-2 cursor-pointer transition-all ${
                   isCurrentMonthDay
                     ? "bg-white border-gray-300 hover:bg-gray-50 hover:shadow-md"
                     : "bg-gray-50 border-gray-200 hover:bg-gray-100"

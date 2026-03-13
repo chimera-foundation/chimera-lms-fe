@@ -2,7 +2,7 @@
 import { WeeklySchedule } from "../components/weekly-schedule";
 import { MonthlyCalendar } from "../components/monthly-calendar";
 import { EventDetails } from "../components/event-details";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getCalendar } from "@/app/redux/calendar/calendar-slice";
 import { EventItem } from "@/app/models/event";
@@ -45,24 +45,9 @@ export default function CalendarPage() {
     dispatch(getCalendar({ start_date, end_date }));
   }, [dispatch]);
 
-  // const agendaCounts = useMemo(() => {
-  //   const all = schedule?.filter((s) => s.is_active).length;
-  //   const events = schedule.filter(
-  //     (s) =>
-  //       s.is_active &&
-  //       (s.schedule_type.toLowerCase() === "event" ||
-  //         s.schedule_type.toLowerCase() === "class")
-  //   ).length;
-  //   const meetings = schedule.filter(
-  //     (s) => s.is_active && s.schedule_type.toLowerCase() === "meeting"
-  //   ).length;
-
-  //   return { all, events, meetings };
-  // }, [schedule]);
-
-  const handleEventClick = (events: EventItem[]) => {
+  const handleEventClick = useCallback((events: EventItem[]) => {
     setSelectedEvents(events);
-  };
+  }, []);
 
   return (
     <div className="p-6">
