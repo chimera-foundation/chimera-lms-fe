@@ -1,5 +1,95 @@
 @import "tailwindcss";
 
+@theme {
+  --color-chimera-blue-50: #edf1ff;
+  --color-chimera-blue-100: #c8d3ff;
+  --color-chimera-blue-200: #aebeff;
+  --color-chimera-blue-300: #88a0ff;
+  --color-chimera-blue-400: #718dff;
+  --color-chimera-blue-500: #4e71ff;
+  --color-chimera-blue-600: #4767e8;
+  --color-chimera-blue-700: #3750b5;
+  --color-chimera-blue-800: #2b3e8c;
+  --color-chimera-blue-900: #212f6b;
+
+  --color-chimera-purple-50: #eee6fb;
+  --color-chimera-purple-100: #cab3f4;
+  --color-chimera-purple-200: #b08eee;
+  --color-chimera-purple-300: #8c5ae6;
+  --color-chimera-purple-400: #763ae1;
+  --color-chimera-purple-500: #5409da;
+  --color-chimera-purple-600: #4c08c6;
+  --color-chimera-purple-700: #3c069b;
+  --color-chimera-purple-800: #2e0578;
+  --color-chimera-purple-900: #23045c;
+
+  --color-chimera-yellow-50: #fff9e6;
+  --color-chimera-yellow-100: #ffecb2;
+  --color-chimera-yellow-200: #ffe28d;
+  --color-chimera-yellow-300: #fed559;
+  --color-chimera-yellow-400: #fecd39;
+  --color-chimera-yellow-500: #fec107;
+  --color-chimera-yellow-600: #e7b006;
+  --color-chimera-yellow-700: #b48905;
+  --color-chimera-yellow-800: #8c6a04;
+  --color-chimera-yellow-900: #6b5103;
+
+  --color-chimera-green-50: #edf7ee;
+  --color-chimera-green-100: #c8e7c9;
+  --color-chimera-green-200: #addbaf;
+  --color-chimera-green-300: #87ca8a;
+  --color-chimera-green-400: #70cb73;
+  --color-chimera-green-500: #4cb050;
+  --color-chimera-green-600: #45a049;
+  --color-chimera-green-700: #367d39;
+  --color-chimera-green-800: #2a612c;
+  --color-chimera-green-900: #204a22;
+
+  --color-chimera-red-50: #feeceb;
+  --color-chimera-red-100: #fcc5c1;
+  --color-chimera-red-200: #faa9a3;
+  --color-chimera-red-300: #f88179;
+  --color-chimera-red-400: #f7695f;
+  --color-chimera-red-500: #f54337;
+  --color-chimera-red-600: #df3d32;
+  --color-chimera-red-700: #ae3027;
+  --color-chimera-red-800: #87251e;
+  --color-chimera-red-900: #671c17;
+
+  --color-chimera-grey-50: #f0f1f2;
+  --color-chimera-grey-100: #d1d4d8;
+  --color-chimera-grey-200: #bbbec5;
+  --color-chimera-grey-300: #9da1aa;
+  --color-chimera-grey-400: #898f99;
+  --color-chimera-grey-500: #6c7380;
+  --color-chimera-grey-600: #626974;
+  --color-chimera-grey-700: #4d525b;
+  --color-chimera-grey-800: #3b3f46;
+  --color-chimera-grey-900: #2d3036;
+
+  --color-chimera-black-50: #e6e6e6;
+  --color-chimera-black-100: #b0b0b0;
+  --color-chimera-black-200: #8a8a8a;
+  --color-chimera-black-300: #545454;
+  --color-chimera-black-400: #333333;
+  --color-chimera-black-500: #000000;
+  --color-chimera-black-600: #000000;
+  --color-chimera-black-700: #000000;
+  --color-chimera-black-800: #000000;
+  --color-chimera-black-900: #000000;
+
+  --color-chimera-white-50: #ffffff;
+  --color-chimera-white-100: #ffffff;
+  --color-chimera-white-200: #ffffff;
+  --color-chimera-white-300: #ffffff;
+  --color-chimera-white-400: #ffffff;
+  --color-chimera-white-500: #ffffff;
+  --color-chimera-white-600: #e8e8e8;
+  --color-chimera-white-700: #b5b5b5;
+  --color-chimera-white-800: #8c8c8c;
+  --color-chimera-white-900: #6b6b6b;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
