@@ -29,12 +29,13 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
   const [filters, setFilters] = useState({
     event: false,
     meeting: false,
+    schedule: false,
   });
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
 
   const filteredEvents = useMemo(() => {
-    const hasTypeFilter = filters.event || filters.meeting;
+    const hasTypeFilter = filters.event || filters.meeting || filters.schedule;
 
     if (!hasTypeFilter) {
       return events;
@@ -45,10 +46,11 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
 
       return (
         (filters.event && eventType === "vanilla") ||
-        (filters.meeting && eventType === "meeting")
+        (filters.meeting && eventType === "meeting") ||
+        (filters.schedule && eventType === "schedule")
       );
     });
-  }, [events, filters.event, filters.meeting]);
+  }, [events, filters.event, filters.meeting, filters.schedule]);
 
   const eventsByDate = useMemo(() => {
     return groupEventsByDate(filteredEvents);
@@ -108,7 +110,8 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
     return dayEvents.map((event) => (
       <div
         key={event.ID}
-        className="text-xs bg-gray-700 text-white px-2 py-1 rounded mb-1 cursor-pointer hover:bg-gray-600 truncate"
+        style={{ background: `${event.Color}` }}
+        className="text-xs text-white px-2 py-1 rounded mb-1 cursor-pointer hover:bg-gray-600 truncate"
       >
         <div className="font-medium truncate">{event.Title}</div>
         <div className="text-[10px] opacity-80">
@@ -141,109 +144,68 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-chimera-blue-500 rounded-lg shadow">
       <div className="flex items-center justify-between p-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold text-white">
             {getMonthName(currentMonth)} {currentYear}
           </h2>
-        </div>
-        <div className="flex gap-2">
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <button
-              onClick={goToPreviousMonth}
-              className="p-1 hover:bg-gray-100 rounded"
+              onClick={goToNextMonth}
+              className="text-white hover:bg-white/10 rounded-full p-1 transition-colors"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
               </svg>
             </button>
             <button
-              onClick={goToNextMonth}
-              className="p-1 hover:bg-gray-100 rounded"
+              onClick={goToPreviousMonth}
+              className="text-white hover:bg-white/10 rounded-full p-1 transition-colors"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
           </div>
+        </div>
+
+        <div className="flex items-center gap-3">
           <div className="relative">
             <button
               onClick={() => setShowFilterPopup((prev) => !prev)}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 flex items-center gap-1"
+              className="px-4 py-2 text-sm bg-chimera-blue-700 hover:bg-chimera-blue-600 text-white rounded-lg flex items-center gap-2 transition-colors font-medium border border-white/10"
             >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                />
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
               Filter
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d={showFilterPopup ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
-                />
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
+
             <ClickAwayListener onClickAway={() => setShowFilterPopup(false)}>
               <div>
                 {showFilterPopup && (
-                  <div className="absolute right-0 mt-2 w-40 rounded-lg bg-gray-500 text-white shadow-xl z-20 p-2">
+                  <div className="absolute right-0 mt-2 w-44 rounded-xl bg-chimera-blue-800 text-white shadow-2xl z-20 p-2 border border-white/5">
                     <div className="space-y-1 text-sm">
                       {[
                         { key: "event", label: "Event" },
                         { key: "meeting", label: "Meeting" },
+                        { key: "schedule", label: "Class" },
                       ].map((item) => (
                         <label
                           key={item.key}
-                          className="flex items-center gap-2 cursor-pointer rounded px-1 py-1 hover:bg-white/10"
+                          className="flex items-center justify-between cursor-pointer rounded-lg px-3 py-2 hover:bg-white/5 transition-colors"
                         >
+                          <span className="font-medium">{item.label}</span>
                           <input
                             type="checkbox"
                             checked={filters[item.key as keyof typeof filters]}
-                            onChange={() =>
-                              toggleFilter(item.key as keyof typeof filters)
-                            }
-                            className="h-4 w-4 rounded border-gray-200 bg-transparent text-gray-700 focus:ring-gray-300"
+                            onChange={() => toggleFilter(item.key as keyof typeof filters)}
+                            className="h-4 w-4 rounded border-white/20 bg-transparent text-chimera-blue-500 focus:ring-chimera-blue-500"
                           />
-                          <span className="text-sm font-medium">
-                            {item.label}
-                          </span>
                         </label>
                       ))}
                     </div>
@@ -252,19 +214,10 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
               </div>
             </ClickAwayListener>
           </div>
-          <button className="px-3 py-1.5 text-sm bg-gray-700 text-white rounded hover:bg-gray-600 flex items-center gap-1">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
+
+          <button className="px-4 py-2 text-sm bg-chimera-blue-700 hover:bg-chimera-blue-600 text-white rounded-lg flex items-center gap-2 transition-colors font-medium border border-chimera-blue-500">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
             </svg>
             New Agenda
           </button>
@@ -272,17 +225,6 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
       </div>
 
       <div className="p-4">
-        {/* <div className="grid grid-cols-7 gap-2 mb-2">
-          {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => (
-            <div
-              key={dayIndex}
-              className="text-center text-sm font-medium text-gray-600 py-2"
-            >
-              {getDayName(dayIndex)}
-            </div>
-          ))}
-        </div> */}
-
         <div className="grid grid-cols-7 gap-2">
           {calendarDays.map((date, index) => {
             const isCurrentMonthDay = isCurrentMonth(date, currentMonth);
@@ -297,18 +239,15 @@ export const MonthlyCalendar: React.FC<MonthlyCalendarProps> = ({
               <div
                 key={index}
                 onClick={() => handleDateClick(date)}
-                className={`min-h-30 border rounded-lg p-2 cursor-pointer transition-all ${
-                  isCurrentMonthDay
+                className={`${isSelected ? "bg-chimera-blue-100!" : ""
+                  } min-h-30 border rounded-lg p-2 cursor-pointer transition-all ${isCurrentMonthDay
                     ? "bg-white border-gray-300 hover:bg-gray-50 hover:shadow-md"
                     : "bg-gray-50 border-gray-200 hover:bg-gray-100"
-                } ${isTodayDate ? "ring-2 ring-slate-500" : ""} ${
-                  isSelected ? "ring-2 ring-black bg-blue-50" : ""
-                }`}
+                  } ${isTodayDate ? "ring-2 ring-slate-500" : ""}`}
               >
                 <div
-                  className={`text-sm font-medium mb-1 ${
-                    isCurrentMonthDay ? "text-gray-900" : "text-gray-400"
-                  } ${isTodayDate ? "text-blue-600 font-bold" : ""}`}
+                  className={`text-sm font-medium mb-1 ${isCurrentMonthDay ? "text-gray-900" : "text-gray-400"
+                    } ${isTodayDate ? "text-blue-600 font-bold" : ""}`}
                 >
                   {date.getDate()}
                   <span className="text-xs ml-1 font-normal">

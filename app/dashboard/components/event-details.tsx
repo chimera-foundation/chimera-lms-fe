@@ -35,11 +35,12 @@ export const EventDetails: React.FC<EventDetailsProps> = ({ events }) => {
         {events.map((event) => (
           <div
             key={event.ID}
-            className="bg-gray-700 text-white rounded-lg p-4 space-y-3"
+            style={{ backgroundColor: event.Color }}
+            className="text-white rounded-lg p-4 space-y-3"
           >
             <div>
-              <span className="inline-block bg-gray-600 text-white text-xs px-2 py-1 rounded">
-                {event.EventType}
+              <span className="inline-block bg-white/40 text-white text-xs px-2 py-1 rounded">
+                {event.EventType.toUpperCase()}
               </span>
             </div>
 

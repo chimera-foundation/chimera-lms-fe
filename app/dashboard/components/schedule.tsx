@@ -32,16 +32,19 @@ export default function ScheduleSection() {
           dailySchedule.map((sched, index) => (
             <div
               key={sched.ID}
-              className={`bg-[#F5F5F5] flex items-center gap-4 p-3 rounded-lg `}
+              style={{ backgroundColor: `${sched.Color}30` }}
+              className={`flex items-center gap-4 p-3 rounded-lg `}
             >
               <div className="flex-1">
                 <button className="text-xs font-semibold text-black bg-white mb-1 py-1 px-2 rounded-md">
-                  {sched.EventType}
+                  {sched.EventType.toUpperCase()}
                 </button>
                 <p className="font-semibold text-gray-900 mb-2">
                   {sched.Title}
                 </p>
-                <div className="flex items-center gap-4 text-xs text-gray-600">
+                <div
+                  style={{ color: `${sched.Color}` }}
+                  className="flex items-center gap-4 text-xs font-bold">
                   <div className="flex items-center gap-1">
                     <ClockIcon />
                     <span>

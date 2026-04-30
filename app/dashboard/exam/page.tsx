@@ -7,13 +7,17 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getCalendar } from "@/app/redux/calendar/calendar-slice";
 import { EventItem } from "@/app/models/event";
 import { getAllAssessmentsAssignment } from "@/app/redux/assessments/assessment-slice";
+import Overview from "./components/overview";
+import Assignment from "./components/assignment";
+import Exam from "./components/exam";
+import OnlineAssignment from "./components/onlineAssignment";
+import OnlineExam from "./components/onlineExam";
 
 export default function ExamPage() {
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<
     "overview" | "assignment" | "exam" | "onlineAssignment" | "onlineExam"
   >("overview");
-  const [selectedEvents, setSelectedEvents] = useState<EventItem[]>([]);
 
   useEffect(() => {
     dispatch(getAllAssessmentsAssignment({}));
@@ -65,7 +69,7 @@ export default function ExamPage() {
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            Overview
+            Online Assignment
           </button>
           <button
             onClick={() => setActiveTab("onlineExam")}
@@ -80,34 +84,11 @@ export default function ExamPage() {
         </div>
       </div>
 
-      <div>
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-gray-600 rounded-lg p-4 text-white">
-            <div className="text-sm font-medium mb-1">Upcoming Assignment</div>
-            <div className="text-2xl font-bold">
-              TODO<span className="text-base font-normal ml-1">Assignment</span>
-            </div>
-          </div>
-          <div className="bg-gray-600 rounded-lg p-4 text-white">
-            <div className="text-sm font-medium mb-1">Upcoming Exam</div>
-            <div className="text-2xl font-bold mr">
-              TODO<span className="text-base font-normal ml-1">Exam</span>
-            </div>
-          </div>
-          <div className="bg-gray-600 rounded-lg p-4 text-white">
-            <div className="text-sm font-medium mb-1">Missed Assignment</div>
-            <div className="text-2xl font-bold">
-              TODO<span className="text-base font-normal ml-1">Assignment</span>
-            </div>
-          </div>
-          <div className="bg-gray-600 rounded-lg p-4 text-white">
-            <div className="text-sm font-medium mb-1">Missed Exam</div>
-            <div className="text-2xl font-bold">
-              TODO<span className="text-base font-normal ml-1">Exam</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      {activeTab === "overview" && <Overview />}
+      {activeTab === "assignment" && <Assignment />}
+      {activeTab === "exam" && <Exam />}
+      {activeTab === "onlineAssignment" && <OnlineAssignment />}
+      {activeTab === "onlineExam" && <OnlineExam />}
     </div>
   );
 }

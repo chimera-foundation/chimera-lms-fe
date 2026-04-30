@@ -59,21 +59,19 @@ export default function CalendarPage() {
         <div className="flex gap-4 border-b border-gray-200">
           <button
             onClick={() => setActiveTab("calendar")}
-            className={`px-4 py-2 font-medium transition-colors ${
-              activeTab === "calendar"
-                ? "text-gray-900 border-b-2 border-gray-900"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
+            className={`px-4 py-2 font-medium transition-colors ${activeTab === "calendar"
+              ? "text-chimera-blue-400 border-b-2 border-chimera-blue-400"
+              : "text-gray-500 hover:text-chimera-blue-500"
+              }`}
           >
             Calendar
           </button>
           <button
             onClick={() => setActiveTab("schedule")}
-            className={`px-4 py-2 font-medium transition-colors ${
-              activeTab === "schedule"
-                ? "text-gray-900 border-b-2 border-gray-900"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
+            className={`px-4 py-2 font-medium transition-colors ${activeTab === "schedule"
+              ? "text-chimera-blue-400 border-b-2 border-chimera-blue-400"
+              : "text-gray-500 hover:text-chimera-blue-500"
+              }`}
           >
             Schedule
           </button>
@@ -82,34 +80,41 @@ export default function CalendarPage() {
 
       {activeTab === "calendar" ? (
         <div>
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-gray-600 rounded-lg p-4 text-white">
-              <div className="text-sm font-medium mb-1">All Agenda</div>
-              <div className="text-2xl font-bold">
-                {agendaCounts.all}
-                <span className="text-base font-normal ml-1">Agenda</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+              <div className="bg-chimera-green-700 text-white px-4 py-3 text-sm font-medium">
+                All Agenda
+              </div>
+              <div className="p-6 flex items-baseline gap-2">
+                <span className="text-4xl font-bold text-gray-800">{agendaCounts.all}</span>
+                <span className="text-gray-500 font-medium">Agenda</span>
               </div>
             </div>
-            <div className="bg-gray-600 rounded-lg p-4 text-white">
-              <div className="text-sm font-medium mb-1">Event Agenda</div>
-              <div className="text-2xl font-bold mr">
-                {agendaCounts.event}
-                <span className="text-base font-normal ml-1">Agenda</span>
+
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+              <div className="bg-chimera-purple-700 text-white px-4 py-3 text-sm font-medium">
+                Event Agenda
+              </div>
+              <div className="p-6 flex items-baseline gap-2">
+                <span className="text-4xl font-bold text-gray-800">{agendaCounts.event}</span>
+                <span className="text-gray-500 font-medium">Agenda</span>
               </div>
             </div>
-            <div className="bg-gray-600 rounded-lg p-4 text-white">
-              <div className="text-sm font-medium mb-1">Meeting Agenda</div>
-              <div className="text-2xl font-bold">
-                {agendaCounts.meeting}
-                <span className="text-base font-normal ml-1">Agenda</span>
+
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+              <div className="bg-chimera-blue-700 text-white px-4 py-3 text-sm font-medium">
+                Meeting Agenda
+              </div>
+              <div className="p-6 flex items-baseline gap-2">
+                <span className="text-4xl font-bold text-gray-800">{agendaCounts.meeting}</span>
+                <span className="text-gray-500 font-medium">Agenda</span>
               </div>
             </div>
           </div>
 
           <div
-            className={`grid grid-cols-1 gap-6 ${
-              selectedEvents.length > 0 ? "lg:grid-cols-3" : ""
-            }`}
+            className={`grid grid-cols-1 gap-6 ${selectedEvents.length > 0 ? "lg:grid-cols-3" : ""
+              }`}
           >
             <div className={selectedEvents.length > 0 ? "lg:col-span-2" : ""}>
               <MonthlyCalendar

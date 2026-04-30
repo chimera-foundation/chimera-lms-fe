@@ -7,6 +7,8 @@ import {
   getCalendar,
   setSelectedDate,
 } from "@/app/redux/calendar/calendar-slice";
+import { getAllAnnouncements } from "@/app/redux/announcement/announcement-slice";
+import { getAllEvents } from "@/app/redux/event/event-slice";
 
 export function Calendar() {
   const { calendar } = useAppSelector((x) => x.calendar);
@@ -38,6 +40,8 @@ export function Calendar() {
     const { start_date, end_date } = getMonthDateRange(currentDate);
 
     dispatch(getCalendar({ start_date, end_date }));
+    dispatch(getAllAnnouncements({ start_date, end_date }));
+    dispatch(getAllEvents({ start_date, end_date }));
   }, [currentDate, dispatch]);
 
   const monthNames = [
@@ -186,23 +190,19 @@ export function Calendar() {
                 flex flex-col items-center justify-center text-xs rounded-[10px] transition-all duration-100`}
             >
               <span
-                className={`w-8 h-8 flex items-center justify-center rounded-[10px] font-medium ${
-                  day ? "hover:bg-gray-50 cursor-pointer" : ""
-                }
-                ${
-                  isSelected
-                    ? "bg-gray-800! text-white font-semibold hover:bg-gray-700"
+                className={`w-8 h-8 flex items-center justify-center rounded-[10px] font-medium ${day ? "hover:bg-gray-50 cursor-pointer" : ""
+                  }
+                ${isSelected
+                    ? "bg-chimera-blue-500! text-white! font-semibold hover:bg-gray-700"
                     : ""
-                }
-                ${
-                  !isSelected && isToday
-                    ? "bg-gray-300 font-semibold hover:bg-gray-200"
+                  }
+                ${!isSelected && isToday
+                    ? "bg-chimera-blue-500 font-semibold hover:bg-gray-200 text-white"
                     : ""
-                }
+                  }
                 ${day && !isSelected ? "text-gray-900" : ""}
-                ${!day ? "text-gray-300" : ""} ${
-                  eventMarker ? "bg-zinc-100" : ""
-                }`}
+                ${!day ? "text-gray-300" : ""} ${eventMarker ? "bg-chimera-blue-50 text-chimera-blue-500!" : ""
+                  }`}
               >
                 {day || ""}
               </span>

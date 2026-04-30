@@ -14,7 +14,8 @@ export default function EventsSection({ title }: { title: string }) {
           events.map((ev, index) => (
             <div
               key={ev.ID}
-              className={`bg-[#F5F5F5] flex items-center gap-4 p-3 rounded-lg `}
+              style={{ backgroundColor: `${ev.Color}30` }}
+              className={`flex items-center gap-4 p-3 rounded-lg `}
             >
               <div className="p-1 flex flex-col items-center min-w-12.5 bg-white rounded-md">
                 <p className="text-2xl font-bold text-gray-800">
@@ -30,7 +31,10 @@ export default function EventsSection({ title }: { title: string }) {
                   {capitalize(ev.EventType)}
                 </p>
                 <p className="font-semibold text-gray-900 mb-2">{ev.Title}</p>
-                <div className="flex items-center gap-4 text-xs text-gray-600">
+                <div
+                  style={{ color: ev.Color }}
+                  className="flex items-center gap-4 text-xs font-bold"
+                >
                   <div className="flex items-center gap-1">
                     <ClockIcon />
                     <span>

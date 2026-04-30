@@ -50,7 +50,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="p-4 h-screen overflow-scroll bg-slate-50">
+    <div className="p-4 h-screen overflow-scroll bg-chimera-blue-50">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>

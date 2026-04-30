@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { getCalendar } from "@/app/redux/calendar/calendar-slice";
 import { EventItem } from "@/app/models/event";
 import ChevronDownIcon from "@/app/components/icons/chevron-down-icon";
-import ChevronUpIcon from "@/app/components/icons/chevron-up-icon";
 import RoomIcon from "@/app/components/icons/room-icon";
 import ClockIcon from "@/app/components/icons/clock-icon";
 
@@ -143,23 +142,23 @@ export function WeeklySchedule() {
   const weekDates = getWeekDates();
 
   return (
-    <div className="bg-white rounded-lg p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-lg p-6 border border-chimera-grey-300 shadow-md">
+      <div className="flex items-center gap-4 mb-6">
         <h2 className="text-xl font-bold text-gray-800">{formatDateRange()}</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-1">
           <button
             onClick={() => changeWeek(-1)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
             title="Previous week"
           >
-            <ChevronUpIcon />
+            <ChevronDownIcon className="size-5 rotate-90" />
           </button>
           <button
             onClick={() => changeWeek(1)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
             title="Next week"
           >
-            <ChevronDownIcon />
+            <ChevronDownIcon className="size-5 -rotate-90" />
           </button>
         </div>
       </div>
@@ -170,20 +169,18 @@ export function WeeklySchedule() {
           const isToday = formatDate(date) === formatDate(new Date());
 
           return (
-            <div key={index} className="flex flex-col">
+            <div key={index} className="flex flex-col border border-chimera-grey-300 rounded-md">
               <div
-                className={`text-center p-3 rounded-t-lg ${
-                  isToday ? "bg-gray-800 text-white" : "bg-gray-600 text-white"
-                }`}
+                className={`text-center p-3 rounded-t-lg text-black ${isToday ? "bg-gray-300 text-black" : ""
+                  }`}
               >
                 <div className="text-sm font-medium">{weekDays[index]}</div>
                 <div className="text-2xl font-bold">{date.getDate()}</div>
               </div>
 
               <div
-                className={`flex-1 rounded-b-lg p-2 space-y-2 min-h-[600px] ${
-                  isToday ? "bg-gray-800" : "bg-gray-600"
-                }`}
+                className={`flex-1 rounded-b-lg p-2 space-y-2 min-h-[600px] ${isToday ? "bg-gray-300" : "bg-white"
+                  }`}
               >
                 {loading ? (
                   <div className="text-center text-gray-500 text-sm py-4">
@@ -197,10 +194,13 @@ export function WeeklySchedule() {
                   daySchedules.map((item) => (
                     <div
                       key={item.ID}
-                      className="bg-[#F5F5F5] rounded-lg p-3 shadow-sm hover:opacity-75 transition-all"
+                      style={{ background: `${item.Color}60` }}
+                      className="rounded-lg p-3 shadow-sm hover:opacity-75 transition-all"
                     >
-                      <button className="text-xs font-bold mb-1 bg-white py-1 px-2 rounded-[5px]">
-                        {item.EventType}
+                      <button
+                        style={{ background: `${item.Color}40` }}
+                        className="text-xs font-bold mb-1 py-1 px-2 rounded-[5px] text-white">
+                        {item.EventType.toUpperCase()}
                       </button>
                       <div className="font-semibold text-sm text-gray-900 mb-2">
                         {item.Title}
