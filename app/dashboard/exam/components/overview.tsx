@@ -1,34 +1,286 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { AssessmentType } from "@/app/services/assessments-service";
+import ClickAwayListener from "react-click-away-listener";
 
-export default function Overview() {
+interface OverviewProps {
+  assessmentAssignment: AssessmentType | null;
+  assessmentExam: AssessmentType | null;
+  loading: boolean;
+  dateFilter: "this_week" | "this_month" | "this_year";
+  setDateFilter: (filter: "this_week" | "this_month" | "this_year") => void;
+}
+
+const statusConfig = {
+  pending: {
+    label: "Pending",
+    badgeBg: "bg-orange-100 text-orange-600",
+  },
+  overdue: {
+    label: "Overdue",
+    badgeBg: "bg-red-100 text-red-600",
+  },
+  submitted: {
+    label: "Submitted",
+    badgeBg: "bg-blue-100 text-blue-600",
+  },
+  done: {
+    label: "Done",
+    badgeBg: "bg-green-100 text-green-600",
+  },
+};
+
+export default function Overview({
+  assessmentAssignment,
+  assessmentExam,
+  loading,
+  dateFilter,
+  setDateFilter,
+}: OverviewProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [showTypeFilterPopup, setShowTypeFilterPopup] = useState(false);
+  const [tableFilters, setTableFilters] = useState({
+    pending: false,
+    overdue: false,
+    submitted: false,
+    done: false,
+  });
+
+  const filterLabels = {
+    this_week: "This week",
+    this_month: "This month",
+    this_year: "This year",
+  };
+
+  const allAssessments = useMemo(() => {
+    const assignments = assessmentAssignment?.assessments || [];
+    const exams = assessmentExam?.assessments || [];
+    return [...assignments, ...exams].sort(
+      (a, b) => new Date(b.due_date).getTime() - new Date(a.due_date).getTime(),
+    );
+  }, [assessmentAssignment, assessmentExam]);
+
+  const filteredAssessments = useMemo(() => {
+    return allAssessments.filter((item) => {
+      const matchesSearch =
+        item.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.title.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const hasStatusFilter =
+        tableFilters.pending ||
+        tableFilters.overdue ||
+        tableFilters.submitted ||
+        tableFilters.done;
+      const matchesStatus = !hasStatusFilter ||
+        (tableFilters.pending && item.status.toLowerCase() === "pending") ||
+        (tableFilters.overdue && item.status.toLowerCase() === "overdue") ||
+        (tableFilters.submitted && item.status.toLowerCase() === "submitted") ||
+        (tableFilters.done && item.status.toLowerCase() === "done");
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [allAssessments, searchQuery, tableFilters]);
+
+  const toggleTableFilter = (key: keyof typeof tableFilters) => {
+    setTableFilters((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const formatDate = (dateString: string | Date) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
+  const getAttachmentIcon = () => (
+    <svg className="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
+      <path d="M14 3.5l5.5 5.5H14V3.5z" fill="white" opacity="0.3" />
+    </svg>
+  );
+
   return (
-    <div>
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="bg-gray-600 rounded-lg p-4 text-white">
-          <div className="text-sm font-medium mb-1">Upcoming Assignment</div>
-          <div className="text-2xl font-bold">
-            TODO<span className="text-base font-normal ml-1">Assignment</span>
+    <div className="space-y-6">
+      <div className="grid grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+          <div className="bg-amber-500 px-4 py-2 text-white text-sm font-bold">Upcoming Assignment</div>
+          <div className="p-4 flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-gray-800">{assessmentAssignment?.summary.pending || 0}</span>
+            <span className="text-gray-500 text-sm">Assignment</span>
           </div>
         </div>
-        <div className="bg-gray-600 rounded-lg p-4 text-white">
-          <div className="text-sm font-medium mb-1">Upcoming Exam</div>
-          <div className="text-2xl font-bold mr">
-            TODO<span className="text-base font-normal ml-1">Exam</span>
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+          <div className="bg-amber-500 px-4 py-2 text-white text-sm font-bold">Upcoming Exam</div>
+          <div className="p-4 flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-gray-800">{assessmentExam?.summary.pending || 0}</span>
+            <span className="text-gray-500 text-sm">Exam</span>
           </div>
         </div>
-        <div className="bg-gray-600 rounded-lg p-4 text-white">
-          <div className="text-sm font-medium mb-1">Missed Assignment</div>
-          <div className="text-2xl font-bold">
-            TODO<span className="text-base font-normal ml-1">Assignment</span>
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+          <div className="bg-red-500 px-4 py-2 text-white text-sm font-bold">Missed Assignment</div>
+          <div className="p-4 flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-gray-800">{assessmentAssignment?.summary.overdue || 0}</span>
+            <span className="text-gray-500 text-sm">Assignment</span>
           </div>
         </div>
-        <div className="bg-gray-600 rounded-lg p-4 text-white">
-          <div className="text-sm font-medium mb-1">Missed Exam</div>
-          <div className="text-2xl font-bold">
-            TODO<span className="text-base font-normal ml-1">Exam</span>
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+          <div className="bg-red-500 px-4 py-2 text-white text-sm font-bold">Missed Exam</div>
+          <div className="p-4 flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-gray-800">{assessmentExam?.summary.overdue || 0}</span>
+            <span className="text-gray-500 text-sm">Exam</span>
           </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm min-h-[400px]">
+        <div className="p-4 flex items-center justify-between border-b border-gray-100">
+          <div className="relative w-72">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search subject, title, etc..."
+              className="w-full pl-10 pr-4 py-2 bg-blue-50/50 border border-blue-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+            />
+            <svg className="absolute left-3 top-2.5 h-4 w-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <div className="flex gap-2">
+            <div className="relative">
+              <button
+                onClick={() => setShowTypeFilterPopup(!showTypeFilterPopup)}
+                className="px-4 py-2 text-sm bg-blue-700 hover:bg-blue-800 text-white rounded-lg flex items-center gap-2 transition-colors font-medium border border-white/10"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                Filter
+                <svg className={`w-3 h-3 transition-transform ${showTypeFilterPopup ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              <ClickAwayListener onClickAway={() => setShowTypeFilterPopup(false)}>
+                <div>
+                  {showTypeFilterPopup && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-xl bg-blue-800 text-white shadow-2xl z-50 p-2 border border-white/5">
+                      <div className="space-y-1 text-sm">
+                        <div className="px-3 py-1 text-[10px] font-bold text-blue-300 uppercase tracking-wider">Status</div>
+                        {[
+                          { key: "pending", label: "Pending" },
+                          { key: "overdue", label: "Overdue" },
+                          { key: "submitted", label: "Submitted" },
+                          { key: "done", label: "Done" },
+                        ].map((item) => (
+                          <label key={item.key} className="flex items-center justify-between cursor-pointer rounded-lg px-3 py-2 hover:bg-white/5 transition-colors">
+                            <span className="font-medium">{item.label}</span>
+                            <input
+                              type="checkbox"
+                              checked={tableFilters[item.key as keyof typeof tableFilters]}
+                              onChange={() => toggleTableFilter(item.key as keyof typeof tableFilters)}
+                              className="h-4 w-4 rounded border-white/20 bg-transparent text-blue-500 focus:ring-blue-500"
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </ClickAwayListener>
+            </div>
+            <div className="relative">
+              <button
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                className="px-4 py-2 text-sm bg-blue-700 hover:bg-blue-800 text-white rounded-lg flex items-center gap-2 transition-colors font-medium min-w-[120px] justify-between"
+              >
+                {filterLabels[dateFilter]}
+                <svg className={`w-3 h-3 transition-transform ${showFilterDropdown ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {showFilterDropdown && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-100 rounded-lg shadow-lg z-10 py-1">
+                  {(["this_week", "this_month", "this_year"] as const).map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => {
+                        setDateFilter(filter);
+                        setShowFilterDropdown(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors ${dateFilter === filter ? "text-blue-600 font-bold bg-blue-50/50" : "text-gray-600"}`}
+                    >
+                      {filterLabels[filter]}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-gray-500 font-medium border-b border-gray-100">
+              <tr>
+                <th className="px-6 py-4 font-semibold text-center">Subject</th>
+                <th className="px-4 py-4 text-center">Title</th>
+                <th className="px-4 py-4 text-center">Type</th>
+                <th className="px-4 py-4 text-center">Subtype</th>
+                <th className="px-4 py-4 text-center">Attachment</th>
+                <th className="px-4 py-4 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
+                    Loading assessments...
+                  </td>
+                </tr>
+              ) : filteredAssessments.length > 0 ? (
+                filteredAssessments.map((item) => {
+                  const statusKey = item.status.toLowerCase() as keyof typeof statusConfig;
+                  const config = statusConfig[statusKey] || statusConfig.pending;
+
+                  return (
+                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-gray-700 text-center">{item.subject}</td>
+                      <td className="px-4 py-4 text-center text-gray-600">
+                        {item.title}
+                      </td>
+                      <td className="px-4 py-4 text-center text-gray-600 capitalize">{item.type}</td>
+                      <td className="px-4 py-4 text-center text-gray-600 capitalize">{item.sub_type.replace("_", " ")}</td>
+                      <td className="px-4 py-4 text-center flex justify-center">
+                        <a href={item.attachment_url} target="_blank" rel="noopener noreferrer" className="hover:opacity-75 transition-opacity">
+                          {getAttachmentIcon()}
+                        </a>
+                      </td>
+                      <td className="px-4 py-4 text-center">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${config.badgeBg}`}>
+                          {config.label}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={6} className="px-6 py-10 text-center text-gray-500 font-medium">
+                    No assignments or exams found for this period.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 }
+
