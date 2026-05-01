@@ -3,10 +3,12 @@ import {
   getCourses,
   getSubject,
   getTrend,
+  getCharacterPoints,
 } from "@/app/redux/grade/grade-slice";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import OverviewTab from "./components/overview-tab";
 import GradeTab from "./components/grade-tab";
+import CharacterTab from "./components/character-tab";
 import { useEffect, useState } from "react";
 
 export default function GradePage() {
@@ -14,12 +16,20 @@ export default function GradePage() {
   const [activeTab, setActiveTab] = useState<
     "overview" | "grade" | "character" | "achievement" | "reportCard"
   >("overview");
-  const { trend, courses, subjects } = useAppSelector((x) => x.grade);
+  const [characterFilter, setCharacterFilter] = useState("this_week");
+  const { trend, courses, subjects, characterPoints, loading } = useAppSelector((x) => x.grade);
+
   useEffect(() => {
     dispatch(getTrend({ filter: "this_year" }));
     dispatch(getCourses());
     dispatch(getSubject({ filter: "2026" }));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (activeTab === "character") {
+      dispatch(getCharacterPoints({ filter: characterFilter, limit: 100, offset: 0 }));
+    }
+  }, [dispatch, activeTab, characterFilter]);
 
 
   return (
@@ -81,6 +91,15 @@ export default function GradePage() {
       )}
 
       {activeTab === "grade" && <GradeTab subjects={subjects} />}
+
+      {activeTab === "character" && (
+        <CharacterTab
+          characterPoints={characterPoints}
+          loading={loading}
+          dateFilter={characterFilter}
+          setDateFilter={setCharacterFilter}
+        />
+      )}
     </div>
   );
 }

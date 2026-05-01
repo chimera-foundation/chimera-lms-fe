@@ -40,3 +40,23 @@ export interface TypeAverage {
   type: string;
   average: number;
 }
+
+export interface CharacterPoint {
+  id: string;
+  point: number;
+  dateGiven: string;
+  note: string;
+  category: string;
+  givenBy: string;
+}
+
+export interface GetCharacterPointsResponse {
+  code: number;
+  status: string;
+  data: {
+    points: CharacterPoint[];
+    total: number;
+    limit: number;
+    offset: number;
+  };
+}

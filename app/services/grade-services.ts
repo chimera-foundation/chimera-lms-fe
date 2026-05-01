@@ -2,6 +2,7 @@ import {
   GetCoursesResponse,
   GetSubjectsResponse,
   GetTrenResponse,
+  GetCharacterPointsResponse,
 } from "../models/grade";
 
 export const getTrendService = async (props: {
@@ -54,6 +55,39 @@ export const getSubjectService = async (props: {
 
   const queryString = params.toString();
   const url = `/api/grade/subjects${queryString ? `?${queryString}` : ""}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+  });
+
+  const data = await response.json();
+
+  return data;
+};
+
+export const getCharacterPointsService = async (props: {
+  filter?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<GetCharacterPointsResponse> => {
+  const params = new URLSearchParams();
+
+  if (props?.filter) {
+    params.append("filter", props.filter);
+  }
+  if (props?.limit !== undefined) {
+    params.append("limit", props.limit.toString());
+  }
+  if (props?.offset !== undefined) {
+    params.append("offset", props.offset.toString());
+  }
+
+  const queryString = params.toString();
+  const url = `/api/grade/character-points${queryString ? `?${queryString}` : ""}`;
 
   const response = await fetch(url, {
     method: "GET",

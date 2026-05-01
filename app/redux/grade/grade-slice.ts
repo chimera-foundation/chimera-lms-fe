@@ -5,13 +5,17 @@ import {
   getCoursesService,
   getSubjectService,
   getTrendService,
+  getCharacterPointsService,
 } from "@/app/services/grade-services";
+import { CharacterPoint } from "@/app/models/grade";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 interface GradeState {
   trend: TrendItem[];
   courses: CourseItem[];
   subjects: Subjects[];
+  characterPoints: CharacterPoint[];
+  characterPointsCount: number;
   loading: boolean;
   error: string | null;
 }
@@ -20,6 +24,8 @@ const initialState: GradeState = {
   courses: [],
   trend: [],
   subjects: [],
+  characterPoints: [],
+  characterPointsCount: 0,
   loading: false,
   error: null,
 };
@@ -41,6 +47,14 @@ export const getSubject = createAsyncThunk(
   "getSubject/GET",
   async (props: { filter?: string }) => {
     const response = await getSubjectService(props);
+    return response;
+  },
+);
+
+export const getCharacterPoints = createAsyncThunk(
+  "getCharacterPoints/GET",
+  async (props: { filter?: string; limit?: number; offset?: number }) => {
+    const response = await getCharacterPointsService(props);
     return response;
   },
 );
@@ -90,6 +104,20 @@ const gradeSlice = createSlice({
       state.subjects = action.payload.data;
     });
     builder.addCase(getSubject.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+    builder.addCase(getCharacterPoints.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(getCharacterPoints.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.characterPoints = action.payload.data.points;
+      state.characterPointsCount = action.payload.data.total;
+    });
+    builder.addCase(getCharacterPoints.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload as string;
     });
