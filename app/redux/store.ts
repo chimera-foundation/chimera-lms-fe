@@ -8,6 +8,7 @@ import assessmentReducer from "./assessments/assessment-slice";
 import calendarReducer from "./calendar/calendar-slice";
 import gradeReducer from "./grade/grade-slice";
 import learningReducer from "./learning/learning-slice";
+import attendanceReducer from "./attendance/attendance-slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -30,6 +31,7 @@ export const store = configureStore({
     calendar: calendarReducer,
     grade: gradeReducer,
     learning: learningReducer,
+    attendance: attendanceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
