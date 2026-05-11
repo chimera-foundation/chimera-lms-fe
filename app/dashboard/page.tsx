@@ -58,7 +58,7 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
           <p className="text-gray-600">Hello Student, welcome back!</p>
         </div>
-        <div>
+        <div className="flex text-left flex-col">
           <p className="font-semibold text-gray-800">{currentUser?.first_name + " " + currentUser?.last_name}</p>
           <p className="text-sm text-gray-500 capitalize">{currentUser?.roles}</p>
         </div>
