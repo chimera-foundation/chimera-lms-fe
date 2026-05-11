@@ -15,9 +15,10 @@ import ScheduleSection from "./components/schedule";
 import { getAllAnnouncements } from "../redux/announcement/announcement-slice";
 import { getAllEvents } from "../redux/event/event-slice";
 import { getCalendar } from "../redux/calendar/calendar-slice";
+import { getCurrentUser } from "../redux/messaging/messaging-slice";
 
 export default function DashboardPage() {
-  const { username } = useAppSelector((x) => x.user);
+  const { currentUser } = useAppSelector((x) => x.messaging);
   const dispatch = useAppDispatch();
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -47,6 +48,7 @@ export default function DashboardPage() {
     // );
     dispatch(getAllAnnouncements({ start_date, end_date }));
     dispatch(getAllEvents({ start_date, end_date }));
+    dispatch(getCurrentUser());
   }, []);
 
   return (
@@ -57,8 +59,8 @@ export default function DashboardPage() {
           <p className="text-gray-600">Hello Student, welcome back!</p>
         </div>
         <div>
-          <p className="font-semibold text-gray-800">{username}</p>
-          <p className="text-sm text-gray-500">Student</p>
+          <p className="font-semibold text-gray-800">{currentUser?.first_name + " " + currentUser?.last_name}</p>
+          <p className="text-sm text-gray-500 capitalize">{currentUser?.roles}</p>
         </div>
       </div>
 

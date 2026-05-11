@@ -10,6 +10,9 @@ interface UserState {
   error: string;
   isAuthenticated: boolean;
   username: string;
+  firstName: string;
+  lastName: string;
+  role: string;
 }
 
 const initialState: UserState = {
@@ -17,6 +20,9 @@ const initialState: UserState = {
   error: "",
   isAuthenticated: false,
   username: "",
+  firstName: "",
+  lastName: "",
+  role: "",
 };
 
 export const loginUser = createAsyncThunk(
@@ -51,11 +57,17 @@ const userSlice = createSlice({
       state.error = "";
       state.isAuthenticated = false;
       state.username = "";
+      state.firstName = "";
+      state.lastName = "";
+      state.role = "";
     },
     logout(state) {
       state.isAuthenticated = false;
       state.error = "";
       state.username = "";
+      state.firstName = "";
+      state.lastName = "";
+      state.role = "";
     },
   },
   extraReducers: (builder) => {
@@ -94,7 +106,13 @@ const userSlice = createSlice({
       })
       .addCase(hydrateSession.fulfilled, (state, action) => {
         state.loading = false;
-        state.username = action.payload.username;
+        const data = action.payload.data || action.payload;
+        state.firstName = data.first_name || "";
+        state.lastName = data.last_name || "";
+        state.username = data.first_name && data.last_name
+          ? `${data.first_name} ${data.last_name}`
+          : data.username || "";
+        state.role = data.roles?.[0] || "";
         state.isAuthenticated = true;
         state.error = "";
       })
